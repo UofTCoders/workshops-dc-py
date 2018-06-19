@@ -4,7 +4,7 @@
     1. Error because tuple are immutable
     2. tuple
     ```
-    
+
 2. Dictionary reassignment
 
     ```
@@ -28,7 +28,7 @@
     2. surveys_last = surveys.iloc[surveys.shape[0]-1]
     3. surveys_last <- surveys.iloc[-1]
     ```
-    
+
 5. Filter data frame
 
     ```
@@ -43,35 +43,42 @@
     surveys_hh['hindfoot_half'] = surveys_hh['hindfoot_length'] / 2 
     surveys_hh = surveys_hh.loc[surveys_hh['hindfoot_half'] < 30]
     ```
-    
+
 2.1. Groupby
 
-```1. surveys.grouby('species')['hindfoot_length'].agg(['mean', 'min', 'max'])```
+```
+1. surveys.grouby('species')['hindfoot_length'].agg(['mean', 'min', 'max'])
+```
 
 
-```2. 
+```
+2.
 max_weight_indices = surveys.groupby("year")['weight'].idxmax()
-surveys.loc([max_weights, ['year', 'genus', 'species', 'weight']]
+surveys[['year', 'genus', 'species', 'weight']].iloc[max_weight_indices]
 ```
 
 2.2. Size
 
 ```
-1. surveys.groupby(['sex', 'genus']).size()
+1.
+surveys.groupby(['plot_type']).size()
 ```
+
 ```
-2. 
-(surveys.groupby('species')['weight']
-  .agg(np.mean)
-  .sort_values(ascending=False)
-  .nlargest(7)
-)
+2.
+surveys.groupby(['year', 'plot_type']).size().nlargest(3)
 ```
 
 2.3. Faceting Part 1
 ```
-1. sns.factorplot(x='month', hue='sex', data=surveys_common, col='species',
+1.
+sns.factorplot(x='month', hue='sex', data=surveys_common, col='species',
                row='plot_type', kind='count', margin_titles=True) 
+
+This can be overwhelming and it often a good idea to break things down into
+smaller chunks. Especially when presenting the data to others, the most
+effective communication is usually to break the messaged down into focused
+topics.
 
 ```
 
@@ -79,7 +86,7 @@ surveys.loc([max_weights, ['year', 'genus', 'species', 'weight']]
 
 
 ```
-1. 
+1.
 weights_year = (
     surveys
      .groupby('year')['weight']
@@ -90,9 +97,9 @@ weights_year = (
 g = sns.FacetGrid(data=weights_year)
 g.map(plt.plot, 'year', 'weight') 
 ```
- 
+
 ```
-2. 
+2.
 weights_species_year = (
     surveys
      .groupby(['year', 'species'])['weight']
