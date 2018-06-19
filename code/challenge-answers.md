@@ -67,7 +67,15 @@ surveys.loc([max_weights, ['year', 'genus', 'species', 'weight']]
   .nlargest(7)
 )
 ```
-2.3. Faceting
+
+2.3. Faceting Part 1
+```
+1. sns.factorplot(x='month', hue='sex', data=surveys_common, col='species',
+               row='plot_type', kind='count', margin_titles=True) 
+
+```
+
+2.4. Faceting Part 2
 
 
 ```
