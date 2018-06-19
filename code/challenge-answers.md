@@ -111,3 +111,70 @@ g = sns.FacetGrid(hue='species', data=weights_species_year, size=2.5,
                  aspect=1.3, col='species', col_wrap=4)
 g.map(plt.plot, 'year', 'weight')
 ```
+
+4. Reshaping data frames and dvanced vizualization
+
+4.1
+```
+1.
+# a. One method chain
+genus_year_wide = (surveys.groupby(['year', 'plot_id'])['genus']
+     .nunique()
+     .reset_index()
+     .pivot_table(index='plot_id', columns='year')
+)
+genus_year_wide
+
+# b. Intermediate variables
+genera_per_plot = surveys.groupby(['plot_id', 'year'])['genus'].nunique().reset_index()
+genera_per_plot = genera_per_plot.pivot_table(index='plot_id', columns='year')
+genera_per_plot.head()
+
+# If someone asks about the hierarchical column names
+# This also remove the genus None column for task 2 in this challenge
+genus_year_wide.columns = genus_year_wide.columns.get_level_values(1)
+genus_year_wide = genus_year_wide.reset_index()
+
+2.
+genera_per_plot.melt(id_vars='plot_id').head()
+```
+
+4.2. Discussion.
+- Boxplot shows a few statistics of the distribution (medain, quartiles, whiskers).
+- Violin plot approximates the distribution with a smoothened histogram, which can be more informative for big data set, but misleading for small datasets. 
+- Swarmplot shows every observations which is great for small to medium data set, but becomes clusttered on large data sets.
+- Combinations of these plots can bring the best of both worlds as we will see soon!
+
+4.3.
+
+First part
+```
+ax = sns.violinplot(x='species', y='sepal_length', data=iris, color='lightgrey', inner=None)
+ax = sns.swarmplot(x='species', y='sepal_length', data=iris) 
+ax.set_ylabel('Sepal Length', fontsize=14)
+ax.set_xlabel('')
+sns.despine()
+```
+
+Second part
+```
+ax = sns.boxplot(x='species', y='sepal_length', data=iris, color='lightgrey')
+ax = sns.stripplot(x='species', y='sepal_length', data=iris, jitter=True) 
+ax.set_ylabel('Sepal Length', fontsize=14)
+ax.set_xlabel('')
+sns.despine()
+```
+
+4.4 Ask them to share which color they chose! Show how to search online for "matplolib markers" which should take them to this page https://matplotlib.org/api/markers_api.html listing all possible markers.
+
+```
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
+ax1.scatter(x, y, marker='<', color='rebeccapurple')
+ax2.plot(x, y, linestyle='dotted', color='salmon')
+
+ax1.set_title('Scatter plot')
+ax2.set_title('Line plot')
+fig.tight_layout()
+```
+
+4.5. Save one of the previous figures and upload it on that website, or ask the students to share one of their own.
