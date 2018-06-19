@@ -43,3 +43,56 @@
     surveys_hh['hindfoot_half'] = surveys_hh['hindfoot_length'] / 2 
     surveys_hh = surveys_hh.loc[surveys_hh['hindfoot_half'] < 30]
     ```
+    
+2.1. Groupby
+
+```1. surveys.grouby('species')['hindfoot_length'].agg(['mean', 'min', 'max'])```
+
+
+```2. 
+max_weight_indices = surveys.groupby("year")['weight'].idxmax()
+surveys.loc([max_weights, ['year', 'genus', 'species', 'weight']]
+```
+
+2.2. Size
+
+```
+1. surveys.groupby(['sex', 'genus']).size()
+```
+```
+2. 
+(surveys.groupby('species')['weight']
+  .agg(np.mean)
+  .sort_values(ascending=False)
+  .nlargest(7)
+)
+```
+2.3. Faceting
+
+
+```
+1. 
+weights_year = (
+    surveys
+     .groupby('year')['weight']
+     .mean()
+     .reset_index()
+)
+
+g = sns.FacetGrid(data=weights_year)
+g.map(plt.plot, 'year', 'weight') 
+```
+ 
+```
+2. 
+weights_species_year = (
+    surveys
+     .groupby(['year', 'species'])['weight']
+     .mean().reset_index()
+     .dropna(subset=['weight'])
+)
+
+g = sns.FacetGrid(hue='species', data=weights_species_year, size=2.5,
+                 aspect=1.3, col='species', col_wrap=4)
+g.map(plt.plot, 'year', 'weight')
+```
