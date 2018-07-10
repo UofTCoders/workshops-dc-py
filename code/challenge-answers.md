@@ -1,3 +1,5 @@
+# Lecture 1
+
 1. Tuples
 
     ```
@@ -12,8 +14,10 @@
     2. rev[2] = 'apple-sauce'
     3. rev
     ```
+ 
+# Lecture 2
 
-3. surveys.info
+1. surveys.info
 
     ```
     1. DataFrame
@@ -21,28 +25,30 @@
     3. some values are NAs (they are missing), for example an animal escaped before it was measured, we will go more into NAs later
     ```
 
-4. Subset data frame
+2. Subset data frame
 
     ```
-    1. surveys_200 = surveys.iloc[199]
-    2. surveys_last = surveys.iloc[surveys.shape[0]-1]
-    3. surveys_last <- surveys.iloc[-1]
+    1. surveys_200_201 = surveys.iloc[199:201] (or surveys[199:201] or by using the row label instead of position)
+    2. surveys[:5]
+    3. surveys.tail(1), surveys.iloc[-1], surveys.iloc[surveys.shape[0]-1]
     ```
 
-5. Filter data frame
+3. Filter data frame
 
     ```
     1. surveys.loc[surveys['year'] < 1995, ['year', 'sex', 'weight']]
     ```
 
-6. Hindfoot half
+4. Hindfoot half
 
     ```
-    1.
-    surveys_hh = surveys.dropna()[['species_id', 'hindfoot_length']]
-    surveys_hh['hindfoot_half'] = surveys_hh['hindfoot_length'] / 2 
-    surveys_hh = surveys_hh.loc[surveys_hh['hindfoot_half'] < 30]
+    1. surveys_hh = surveys[['species_id', 'hindfoot_length']].dropna()
+    2. surveys_hh['hindfoot_half'] = surveys_hh['hindfoot_length'] / 2 
+       surveys_hh = surveys_hh.loc[surveys_hh['hindfoot_half'] < 30]
+    3. surveys_hh.shape == (31436, 3)
     ```
+
+# Lecture 2
 
 2.1. Groupby
 
