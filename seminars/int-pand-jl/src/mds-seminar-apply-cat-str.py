@@ -316,8 +316,14 @@ iris.agg(['mean', 'median'])
 # If we want to use a function that is not available through `pandas`, we can use `apply()`.
 
 # While the built in aggregation methods automatically drop non-numerical values, `apply()` does not. Instead, an error is thrown with non-numerical cols.
+
+# In[ ]:
+
+
 # Throws an error
-iris.apply(np.mean)
+#iris.apply(np.mean)
+
+
 # We could drop the string columns explicitly if there are just a few.
 
 # In[33]:
@@ -476,7 +482,7 @@ pd.testing.assert_series_equal(
 # 
 # For this we will work with the titanic dataset from kaggle. It can be downloaded from their site or via different github users who have mirrored the data in their repos.
 
-# In[113]:
+# In[51]:
 
 
 titanic = pd.read_csv('https://raw.githubusercontent.com/agconti/kaggle-titanic/master/data/train.csv')
@@ -489,7 +495,7 @@ titanic = titanic.drop(columns=['passengerid', 'sibsp', 'parch', 'ticket', 'fare
 titanic
 
 
-# In[114]:
+# In[52]:
 
 
 titanic.info()
@@ -497,7 +503,7 @@ titanic.info()
 
 # How should we interpret the `+` sign under memory usage? In the docstring for `info()`, there is one option that affects memory usage, let's try it.
 
-# In[115]:
+# In[53]:
 
 
 titanic.info(memory_usage='deep')
@@ -509,13 +515,13 @@ titanic.info(memory_usage='deep')
 # 
 # So deep memory introspection shows the real memory usage, but it is still a bit cryptic what part of the dataframe's size was hidden previously. To find this out, it is helpful to understand that `pandas` dataframes essentially consist of `numpy` arrays held together with the `pandas` dataframe block manager. Knowing that, it would be interesting to inspect whether any of the columns (the separate `numpy` arrays) report different size measures with and without deep memory introspection. Instead of the more general `info()` method, we can use the more specific `memory_usage()` method to find this out.
 
-# In[116]:
+# In[54]:
 
 
 titanic.memory_usage()
 
 
-# In[117]:
+# In[55]:
 
 
 titanic.memory_usage(deep=True)
@@ -543,7 +549,7 @@ titanic.memory_usage(deep=True)
 # 
 # Note that memory usage is not the same as disk usage. Objects can take up additional space in memory depending on how they are constructed.
 
-# In[140]:
+# In[56]:
 
 
 titanic.to_csv('titanic.csv', index=False)
@@ -554,19 +560,19 @@ get_ipython().system('ls -lh titanic.csv')
 # 
 # `Categorical` can be used to convert a string-based object column into categorical values.
 
-# In[119]:
+# In[57]:
 
 
 pd.Categorical(titanic['sex'])
 
 
-# In[120]:
+# In[58]:
 
 
 titanic['sex'] = pd.Categorical(titanic['sex'])
 
 
-# In[121]:
+# In[59]:
 
 
 titanic.dtypes
@@ -574,7 +580,7 @@ titanic.dtypes
 
 # The dtype has now changed to `category`.
 
-# In[122]:
+# In[60]:
 
 
 titanic.memory_usage(deep=True)
@@ -582,7 +588,7 @@ titanic.memory_usage(deep=True)
 
 # The `sex` column takes up 50x less space in memory after being converted to a categorical dtype. It actually even takes up less space than the other integer columns, how is that possible? The answer is that when storing integers, `pandas` by default uses 64-bit precision to allow for large numbers to be stored (and added to the dataframe without making a new copy). When creating the categorical series, `pandas` uses the lowest needed precision (`int8` in this case) since it is unlikely that so many new categories will be added that this storage format reaches its limitation (which for `int8` is 256 values).
 
-# In[123]:
+# In[61]:
 
 
 titanic['sex'].cat.codes
@@ -590,7 +596,7 @@ titanic['sex'].cat.codes
 
 # Note that if we try to store an object with unique strings as a category, we actually *increase* the memory usage, because we are still storing all the unique strings once in the dictionary, and on top of that we have added a unique number for each string.
 
-# In[124]:
+# In[62]:
 
 
 titanic['cat_name'] = pd.Categorical(titanic['name'])
@@ -599,7 +605,7 @@ titanic.memory_usage(deep=True)
 
 # In addition to memory savings, categories are beneficial for certain types of operations. In the titanic dataset, there are a few more variables that does not have the correct data type.
 
-# In[125]:
+# In[63]:
 
 
 titanic
@@ -607,7 +613,7 @@ titanic
 
 # `survived` and `pclass` are not numerical variables, they are categorical. `survived` can be stored as a boolean variable, which takes exactly one byte per row.
 
-# In[126]:
+# In[64]:
 
 
 titanic['survived'] = titanic['survived'].astype('bool')
@@ -616,7 +622,7 @@ titanic.memory_usage(deep=True)
 
 # Survived is stored as `int8` and is exactly 1/8th of the integer columns since there is no overhead from storing the categorical mapping dictionary.
 
-# In[127]:
+# In[65]:
 
 
 7128 / 891
@@ -624,13 +630,13 @@ titanic.memory_usage(deep=True)
 
 # `pclass` is an ordered categorical, where first class is the highest class and third class is the lowest. Note that this is not the same as a numerical, e.g. it is non-sensical to say that second class is double first class.
 
-# In[128]:
+# In[66]:
 
 
 pd.Categorical(titanic['pclass'], categories=['3rd', '2nd', '1st'], ordered=True)
 
 
-# In[129]:
+# In[67]:
 
 
 titanic['pclass'] = pd.Categorical(titanic['pclass'], categories=['3rd', '2nd', '1st'], ordered=True)
@@ -638,7 +644,7 @@ titanic['pclass'] = pd.Categorical(titanic['pclass'], categories=['3rd', '2nd', 
 
 # With an ordered categorical, comparisons can be made. We can get everything that is higher than third class.
 
-# In[130]:
+# In[68]:
 
 
 # Note that comparisons with string also work, but it is just comparing alphabetical order.
@@ -647,13 +653,13 @@ titanic['pclass'][titanic['pclass'] > '3rd'].value_counts()
 
 # The order is also respected by pandas and seaborn, such as in the sort performed by default in groupby.
 
-# In[131]:
+# In[69]:
 
 
 titanic.groupby('pclass').size()
 
 
-# In[132]:
+# In[70]:
 
 
 titanic.groupby('pclass').describe()
@@ -661,7 +667,7 @@ titanic.groupby('pclass').describe()
 
 # For methods that don't sort, this will not be in order, e.g. `groupby.head()`.
 
-# In[133]:
+# In[71]:
 
 
 titanic.groupby('pclass').head(2)
@@ -669,7 +675,7 @@ titanic.groupby('pclass').head(2)
 
 # `values_counts()` sorts based on value, not index.
 
-# In[134]:
+# In[72]:
 
 
 titanic['pclass'].value_counts(normalize=True)
@@ -677,7 +683,7 @@ titanic['pclass'].value_counts(normalize=True)
 
 # Which we can see if we profile it.
 
-# In[135]:
+# In[73]:
 
 
 get_ipython().run_cell_magic('prun', '-l 5', "titanic['pclass'].value_counts(normalize=True)")
@@ -685,7 +691,7 @@ get_ipython().run_cell_magic('prun', '-l 5', "titanic['pclass'].value_counts(nor
 
 # seaborn will also sort the values according to the categorical order from left to right.
 
-# In[137]:
+# In[74]:
 
 
 sns.catplot(x='pclass', y='age', data=titanic, kind='swarm')
@@ -693,7 +699,7 @@ sns.catplot(x='pclass', y='age', data=titanic, kind='swarm')
 
 # When `catplot()` was added for categorical plots, the `seaborn` author also added another human companion plot as an easter egg.
 
-# In[138]:
+# In[75]:
 
 
 sns.dogplot()
@@ -1025,9 +1031,21 @@ titanic_long.groupby('variable').agg(['mean', 'median'])
 # import re
 # titanic.rename(columns=lambda x: re.sub('(?!^)([A-Z]+)', r'_\1', x).lower())
 
+
+# In[ ]:
+
+
 # Show all commands run this session, even from deleted cells
-%hist# Grep through all commands from all sessions
-%hist -g mrs_paren
+#%hist
+
+
+# In[ ]:
+
+
+# Grep through all commands from all sessions
+#%hist -g mrs_paren
+
+
 # In[109]:
 
 
