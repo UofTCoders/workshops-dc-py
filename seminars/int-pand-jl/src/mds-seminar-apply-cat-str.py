@@ -187,7 +187,7 @@ get_ipython().run_cell_magic('timeit', '', "iris['species'].describe()")
 
 # From this benchmarking, it is clear which approach is faster and which is slowest, but we do not have a clear idea why.
 
-# In[115]:
+# In[18]:
 
 
 get_ipython().run_cell_magic('prun', '-l 7 -s cumulative # show the top 7 lines only', "iris.select_dtypes('object').describe()")
@@ -293,7 +293,7 @@ iris.corr().style.background_gradient(cmap='Greens').to_excel('style-test.xlsx')
 # 
 # Aggregations can be specified in many different ways in pandas. From highly optimized built-in functions to highly flexible arbitrary functions. If the functionality you need is available as a DataFrame method, use it. These methods tend to have their most time consuming internals written in C and thus perform very well.
 
-# In[109]:
+# In[30]:
 
 
 iris.mean()
@@ -476,18 +476,20 @@ pd.testing.assert_series_equal(
 # 
 # For this we will work with the titanic dataset from kaggle. It can be downloaded from their site or via different github users who have mirrored the data in their repos.
 
-# In[122]:
+# In[113]:
 
 
 titanic = pd.read_csv('https://raw.githubusercontent.com/agconti/kaggle-titanic/master/data/train.csv')
 # Convert column names to lower case, more on `str` later
 titanic.columns = titanic.columns.str.lower()
+# Change pclass values for clarity
+titanic['pclass'] = titanic['pclass'].map({1: '1st', 2: '2nd', 3: '3rd'})
 # Drop columns that we won't use
 titanic = titanic.drop(columns=['passengerid', 'sibsp', 'parch', 'ticket', 'fare', 'cabin', 'embarked'])
 titanic
 
 
-# In[123]:
+# In[114]:
 
 
 titanic.info()
@@ -495,7 +497,7 @@ titanic.info()
 
 # How should we interpret the `+` sign under memory usage? In the docstring for `info()`, there is one option that affects memory usage, let's try it.
 
-# In[124]:
+# In[115]:
 
 
 titanic.info(memory_usage='deep')
@@ -507,13 +509,13 @@ titanic.info(memory_usage='deep')
 # 
 # So deep memory introspection shows the real memory usage, but it is still a bit cryptic what part of the dataframe's size was hidden previously. To find this out, it is helpful to understand that `pandas` dataframes essentially consist of `numpy` arrays held together with the `pandas` dataframe block manager. Knowing that, it would be interesting to inspect whether any of the columns (the separate `numpy` arrays) report different size measures with and without deep memory introspection. Instead of the more general `info()` method, we can use the more specific `memory_usage()` method to find this out.
 
-# In[54]:
+# In[116]:
 
 
 titanic.memory_usage()
 
 
-# In[55]:
+# In[117]:
 
 
 titanic.memory_usage(deep=True)
@@ -521,19 +523,19 @@ titanic.memory_usage(deep=True)
 
 # From this, it is clear that it is the `name`, `sex`, and `pclass` columns that change, everything else remains the same. To understand what is happening, we first need to know that a `numpy` array is stored in the computer's memory as a contiguous (uninterrupted) segment. This is one of the reasons why `numpy` is so fast, it only needs to find the start of the array and then access a sequential length from the start point instead of trying to look up every single object (which is how a lists work in Python). This is well illustrated in the figure below from the Python Data Science Handbook.
 # 
-# ![](./img/array_vs_list.png)
+# ![](../img/array_vs_list.png)
 # 
 # [Image source](https://jakevdp.github.io/PythonDataScienceHandbook/02.01-understanding-data-types.html)
 
 # In order for `numpy` to store objects contiguously in memory, it needs to allocate the same fixed number of bits for each object in the array. For example, to store a binary value, only one bit would be required which can be either zero or one. To store integers, it is however many bits are needed to count up to that integer, e.g. two bits for the number 3 (`11` in binary), three bits for the number 4 (`100` in binary). By default, `numpy` will store integer values in arrays as the 64-bit integer data type, which accommodates values up to $2^{64}$ (around $18*10^{18}$).
 # 
-# ![](img/binary-count.png)
+# ![](../img/binary-count.png)
 # 
 # [Image source](https://en.wikipedia.org/wiki/Binary-coded_decimal)
 
 # This is fine for integers (up to a certain size) or floats (up to a certain precision), but with strings of variable length (and more complex object such as lists and dictionaries), `numpy` cannot fit them into the fixed sized chunks in an effective manner (strings of fixed length would technically work fine) and the actual string object is stored outside the array. So what is inside the array? Just a reference (also called a pointer) to where in memory the actual object is stored and these references are of a fixed size:
 # 
-# ![](./img/int-vs-pointer-memory-lookup.png)
+# ![](../img/int-vs-pointer-memory-lookup.png)
 # 
 # [Image source](https://stackoverflow.com/questions/21018654/strings-in-a-dataframe-but-dtype-is-object/21020411#21020411)
 
@@ -541,29 +543,30 @@ titanic.memory_usage(deep=True)
 # 
 # Note that memory usage is not the same as disk usage. Objects can take up additional space in memory depending on how they are constructed.
 
-# In[56]:
+# In[140]:
 
 
-ls -lh titanic.csv
+titanic.to_csv('titanic.csv', index=False)
+get_ipython().system('ls -lh titanic.csv')
 
 
 # For columns with a unique string for each row, there is currently no way around storing these as the object dtype. This is the case for the `name` column in the titanic dataset. However, columns with repeating strings can preferentially be treated as categoricals, which both reduces memory usage and enables additional functionality. For example, for the `sex` column, it is inefficient to store `'Male'` and `'Female'` for each row, especially taking into account the memory storage limitations mentioned above. Instead, it would be beneficial to store and integer for each row, and then have a separate dictionary that translates these integer into their respective strings (which are only stored once).
 # 
 # `Categorical` can be used to convert a string-based object column into categorical values.
 
-# In[57]:
+# In[119]:
 
 
 pd.Categorical(titanic['sex'])
 
 
-# In[58]:
+# In[120]:
 
 
 titanic['sex'] = pd.Categorical(titanic['sex'])
 
 
-# In[59]:
+# In[121]:
 
 
 titanic.dtypes
@@ -571,7 +574,7 @@ titanic.dtypes
 
 # The dtype has now changed to `category`.
 
-# In[60]:
+# In[122]:
 
 
 titanic.memory_usage(deep=True)
@@ -579,7 +582,7 @@ titanic.memory_usage(deep=True)
 
 # The `sex` column takes up 50x less space in memory after being converted to a categorical dtype. It actually even takes up less space than the other integer columns, how is that possible? The answer is that when storing integers, `pandas` by default uses 64-bit precision to allow for large numbers to be stored (and added to the dataframe without making a new copy). When creating the categorical series, `pandas` uses the lowest needed precision (`int8` in this case) since it is unlikely that so many new categories will be added that this storage format reaches its limitation (which for `int8` is 256 values).
 
-# In[61]:
+# In[123]:
 
 
 titanic['sex'].cat.codes
@@ -587,7 +590,7 @@ titanic['sex'].cat.codes
 
 # Note that if we try to store an object with unique strings as a category, we actually *increase* the memory usage, because we are still storing all the unique strings once in the dictionary, and on top of that we have added a unique number for each string.
 
-# In[62]:
+# In[124]:
 
 
 titanic['cat_name'] = pd.Categorical(titanic['name'])
@@ -596,7 +599,7 @@ titanic.memory_usage(deep=True)
 
 # In addition to memory savings, categories are beneficial for certain types of operations. In the titanic dataset, there are a few more variables that does not have the correct data type.
 
-# In[63]:
+# In[125]:
 
 
 titanic
@@ -604,7 +607,7 @@ titanic
 
 # `survived` and `pclass` are not numerical variables, they are categorical. `survived` can be stored as a boolean variable, which takes exactly one byte per row.
 
-# In[64]:
+# In[126]:
 
 
 titanic['survived'] = titanic['survived'].astype('bool')
@@ -613,7 +616,7 @@ titanic.memory_usage(deep=True)
 
 # Survived is stored as `int8` and is exactly 1/8th of the integer columns since there is no overhead from storing the categorical mapping dictionary.
 
-# In[125]:
+# In[127]:
 
 
 7128 / 891
@@ -621,13 +624,13 @@ titanic.memory_usage(deep=True)
 
 # `pclass` is an ordered categorical, where first class is the highest class and third class is the lowest. Note that this is not the same as a numerical, e.g. it is non-sensical to say that second class is double first class.
 
-# In[66]:
+# In[128]:
 
 
 pd.Categorical(titanic['pclass'], categories=['3rd', '2nd', '1st'], ordered=True)
 
 
-# In[67]:
+# In[129]:
 
 
 titanic['pclass'] = pd.Categorical(titanic['pclass'], categories=['3rd', '2nd', '1st'], ordered=True)
@@ -635,7 +638,7 @@ titanic['pclass'] = pd.Categorical(titanic['pclass'], categories=['3rd', '2nd', 
 
 # With an ordered categorical, comparisons can be made. We can get everything that is higher than third class.
 
-# In[68]:
+# In[130]:
 
 
 # Note that comparisons with string also work, but it is just comparing alphabetical order.
@@ -644,13 +647,13 @@ titanic['pclass'][titanic['pclass'] > '3rd'].value_counts()
 
 # The order is also respected by pandas and seaborn, such as in the sort performed by default in groupby.
 
-# In[69]:
+# In[131]:
 
 
 titanic.groupby('pclass').size()
 
 
-# In[70]:
+# In[132]:
 
 
 titanic.groupby('pclass').describe()
@@ -658,7 +661,7 @@ titanic.groupby('pclass').describe()
 
 # For methods that don't sort, this will not be in order, e.g. `groupby.head()`.
 
-# In[71]:
+# In[133]:
 
 
 titanic.groupby('pclass').head(2)
@@ -666,7 +669,7 @@ titanic.groupby('pclass').head(2)
 
 # `values_counts()` sorts based on value, not index.
 
-# In[72]:
+# In[134]:
 
 
 titanic['pclass'].value_counts(normalize=True)
@@ -674,7 +677,7 @@ titanic['pclass'].value_counts(normalize=True)
 
 # Which we can see if we profile it.
 
-# In[73]:
+# In[135]:
 
 
 get_ipython().run_cell_magic('prun', '-l 5', "titanic['pclass'].value_counts(normalize=True)")
@@ -682,7 +685,7 @@ get_ipython().run_cell_magic('prun', '-l 5', "titanic['pclass'].value_counts(nor
 
 # seaborn will also sort the values according to the categorical order from left to right.
 
-# In[74]:
+# In[137]:
 
 
 sns.catplot(x='pclass', y='age', data=titanic, kind='swarm')
@@ -690,7 +693,7 @@ sns.catplot(x='pclass', y='age', data=titanic, kind='swarm')
 
 # When `catplot()` was added for categorical plots, the `seaborn` author also added another human companion plot as an easter egg.
 
-# In[75]:
+# In[138]:
 
 
 sns.dogplot()
@@ -708,7 +711,7 @@ sns.dogplot()
 
 # We could use these with dataframes, via `apply()`.
 
-# In[136]:
+# In[77]:
 
 
 titanic['name'].apply(lambda x: x.lower())
@@ -716,7 +719,7 @@ titanic['name'].apply(lambda x: x.lower())
 
 # However, `pandas` has a built-in accessor attribute, which gives access to these string methods (and some special ones) in a more convenient syntax.
 
-# In[137]:
+# In[78]:
 
 
 titanic['name'].str.lower()
@@ -728,7 +731,7 @@ titanic['name'].str.lower()
 # 
 # To find this out, we need to split first and last names from the `name` column.
 
-# In[138]:
+# In[79]:
 
 
 titanic['name'].str.split(',')
@@ -744,7 +747,7 @@ titanic['name'].str.split(',', expand=True)
 
 # Another way of doing this is with `partition()` which expands by default. However, it also includes the separator in its own column, so it is not ideal for our purposes here, but we will be using it later.
 
-# In[143]:
+# In[81]:
 
 
 titanic['name'].str.partition(',')
@@ -752,7 +755,7 @@ titanic['name'].str.partition(',')
 
 # The output can be assigned to multiple columns.
 
-# In[81]:
+# In[82]:
 
 
 titanic[['lastname', 'firstname']] = titanic['name'].str.split(',', expand=True)
@@ -761,7 +764,7 @@ titanic
 
 # The `len()` method gives the length of each string.
 
-# In[82]:
+# In[83]:
 
 
 titanic['lastname_length'] = titanic['lastname'].str.len()
@@ -770,7 +773,7 @@ titanic
 
 # We can see if it worked by looking at the top few values.
 
-# In[83]:
+# In[84]:
 
 
 titanic.sort_values('lastname_length', ascending=False).head()
@@ -778,13 +781,13 @@ titanic.sort_values('lastname_length', ascending=False).head()
 
 # A shortcut for sorting, that also performs better, is to use `nlargest()`.
 
-# In[144]:
+# In[85]:
 
 
 titanic.nlargest(5, 'lastname_length')
 
 
-# In[85]:
+# In[86]:
 
 
 sns.distplot(titanic['lastname_length'], bins=20)
@@ -792,7 +795,7 @@ sns.distplot(titanic['lastname_length'], bins=20)
 
 # `pandas` also includes useful method to answer how many people have the same lastname.
 
-# In[86]:
+# In[87]:
 
 
 titanic['lastname'].value_counts()
@@ -800,7 +803,7 @@ titanic['lastname'].value_counts()
 
 # Nine people are named `'Andersson'`.
 
-# In[87]:
+# In[88]:
 
 
 titanic['lastname'].value_counts().value_counts()
@@ -808,7 +811,7 @@ titanic['lastname'].value_counts().value_counts()
 
 # The most common scenario is that only one person has any given last name, but overall there are more than 100 people that share last name with someone else. With `duplicated()` we can view all the entries for people sharing last names.
 
-# In[88]:
+# In[89]:
 
 
 titanic[titanic.duplicated('lastname', keep=False)].sort_values(['lastname'])
@@ -816,7 +819,7 @@ titanic[titanic.duplicated('lastname', keep=False)].sort_values(['lastname'])
 
 # It seems like lastname duplication can be due to female passengers being registered under their husbands lastname. To get an idea of how many occurrences there of female passengers with the title `Mrs.` and a parenthesis in their last name (indicating another maiden name), we can use the `str.contains` method. Let's start with just the parenthesis.
 
-# In[89]:
+# In[90]:
 
 
 titanic.loc[titanic['name'].str.contains('\('), 'sex'].value_counts()
@@ -830,7 +833,7 @@ titanic.loc[titanic['name'].str.contains('\('), 'sex'].value_counts()
 # 
 # Multi-line statements can be formatted in a few different ways in Python, e.g. we could use the explicit line continuation character `\` for a syntax similar to how R uses `%>%`.
 
-# In[90]:
+# In[91]:
 
 
 titanic     .loc[titanic['name'].str.contains('\('), 'sex']     .value_counts()
@@ -838,7 +841,7 @@ titanic     .loc[titanic['name'].str.contains('\('), 'sex']     .value_counts()
 
 # This is perfectly fine according to the style guides and readable so feel free to use this style if it is easy to remember due it's similarity to pipes in `dplyr`. More common in Python is to use implicit line continuation with an open `(` to indicate the line continues below.
 
-# In[91]:
+# In[92]:
 
 
 (titanic
@@ -858,7 +861,7 @@ titanic     .loc[titanic['name'].str.contains('\('), 'sex']     .value_counts()
     .value_counts())
 
 
-# In[92]:
+# In[94]:
 
 
 # `value_counts()` can also create normalized counts.
@@ -871,7 +874,7 @@ titanic     .loc[titanic['name'].str.contains('\('), 'sex']     .value_counts()
 
 # There seems to be several reasons for parenthesis in the name. The ones we want to change are the ones who have 'Mrs' and a parenthesis in the name. To combine boolean expression we can surround each one with `()` and then use the bitwise comparison operators: `&` for "and", `|` for "or".  These compare each row for the two separate boolean expressions and outputs a single boolean matrix.
 
-# In[94]:
+# In[95]:
 
 
 (titanic
@@ -883,7 +886,7 @@ titanic     .loc[titanic['name'].str.contains('\('), 'sex']     .value_counts()
 
 # Dropped all male and 4 female passengers. Which females were dropped?
 
-# In[95]:
+# In[96]:
 
 
 (titanic
@@ -895,7 +898,7 @@ titanic     .loc[titanic['name'].str.contains('\('), 'sex']     .value_counts()
 
 # Even more precisely, we only want to keep the ones with a last and first name in the parentheses. We can use the fact that these seems to be separated by a space. `contains` accepts regular expression, and we will use `.*` which means "match any characters", similar to how wildcards work in the Unix shell.
 
-# In[96]:
+# In[97]:
 
 
 # Explain regex above
@@ -907,7 +910,7 @@ titanic     .loc[titanic['name'].str.contains('\('), 'sex']     .value_counts()
 
 # From these passengers, we can extract the name in the parenthesis using `partition`, which we saw previously.
 
-# In[97]:
+# In[98]:
 
 
 (titanic
@@ -915,7 +918,7 @@ titanic     .loc[titanic['name'].str.contains('\('), 'sex']     .value_counts()
     .str.partition('(')[2])
 
 
-# In[98]:
+# In[99]:
 
 
 (titanic
@@ -926,7 +929,7 @@ titanic     .loc[titanic['name'].str.contains('\('), 'sex']     .value_counts()
 
 # In this case I could also have used string indexing to strip the last character, but this would give us issues if there are spaces at the end.
 
-# In[ ]:
+# In[100]:
 
 
 (titanic
@@ -938,7 +941,7 @@ titanic     .loc[titanic['name'].str.contains('\('), 'sex']     .value_counts()
 
 # There is a more advanced way of getting this with regex directly, using a matching group to find anything in the parenthesis.
 
-# In[99]:
+# In[101]:
 
 
 (titanic
@@ -950,7 +953,7 @@ titanic     .loc[titanic['name'].str.contains('\('), 'sex']     .value_counts()
 # 
 # Now lets get just the last names from this column and assign them back to the dataframe.
 
-# In[100]:
+# In[102]:
 
 
 (titanic
@@ -962,7 +965,7 @@ titanic     .loc[titanic['name'].str.contains('\('), 'sex']     .value_counts()
 
 # All the lastnames without parenthsis will remain the same and we will only overwrite those that match the criteria we set up above.
 
-# In[101]:
+# In[103]:
 
 
 titanic['real_last'] = titanic['lastname']
@@ -976,7 +979,7 @@ titanic.loc[mrs_paren, 'real_last'] = (titanic
     .str.rsplit(n=1, expand=True)[1])
 
 
-# In[102]:
+# In[104]:
 
 
 titanic
@@ -984,13 +987,13 @@ titanic
 
 # This seems to have worked as we expected, passengers with "Mrs" in their name have a new value under `real_last`, but others don't.
 
-# In[103]:
+# In[105]:
 
 
 titanic['lastname'].value_counts().value_counts()
 
 
-# In[104]:
+# In[106]:
 
 
 titanic['real_last'].value_counts().value_counts()
@@ -1000,7 +1003,7 @@ titanic['real_last'].value_counts().value_counts()
 # 
 # We can visualize the results with a paired barplot of counts.
 
-# In[106]:
+# In[107]:
 
 
 titanic['real_last_length'] = titanic['real_last'].str.len()
@@ -1015,7 +1018,7 @@ titanic_long.groupby('variable').agg(['mean', 'median'])
 
 # # A few extras
 
-# In[107]:
+# In[108]:
 
 
 # Convert upper case column names to lower case and replace spaces with underscores
@@ -1025,7 +1028,7 @@ titanic_long.groupby('variable').agg(['mean', 'median'])
 # Show all commands run this session, even from deleted cells
 %hist# Grep through all commands from all sessions
 %hist -g mrs_paren
-# In[108]:
+# In[109]:
 
 
 # For easier version control, this can be run in the last notebook cell (or use jupytext)
