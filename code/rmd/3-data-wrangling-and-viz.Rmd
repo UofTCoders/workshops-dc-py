@@ -1,0 +1,753 @@
+---
+jupyter:
+  jupytext:
+    formats: ipynb,rmd//Rmd
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.1'
+      jupytext_version: 1.2.1
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+# Graphically exploring data
+
+- Learning Objectives
+
+    - Learn how to plot with matplotlib
+    - Set universal plot settings.
+    - Produce scatter plots, line plots, and histograms using seaborn and matplotlib.
+    - Understand how to graphically explore relationships between variables.
+    - Apply grids for faceting in seaborn.
+    - Use seaborn grids with matplotlib functions
+
+- Lesson outline
+
+    - Data visualization with matplotlib and seaborn (10 min)
+        - Intro to plotting with matplotlib
+        - Visualizing one quantitative variable with multiple categorical variables (50 min)
+        - Visualizing the relationship of two quantitative variable with multiple categorical variables (40min)
+
+## Short review from yesterday
+
+Do you remember how to:
+
+1 Read in the data from the csv file from yesterday?
+
+```{python}
+import pandas as pd
+
+world_data = pd.read_csv('https://raw.githubusercontent.com/UofTCoders/2018-09-10-utoronto/gh-pages/data/world-data-gapminder.csv')
+
+# If saved locally yesterday:
+# surveys = pd.read_csv("world_data.csv")
+```
+
+2 How to select only the columns 'country' and 'year' from the data frame?
+
+```{python}
+world_data[['country', 'year']].head() #head just to limit output
+```
+
+3 How to select a few rows together with the columns above?
+
+```{python}
+world_data.loc[[1, 13, 24], ['country', 'year']]
+```
+
+4 How to select only data from year 1995?
+
+```{python}
+world_data.loc[world_data['year'] == 1995]
+```
+
+5 Select only the rows where the region is Asia or Africa.
+
+```{python}
+world_data.loc[world_data['region'].isin(['Asia', 'Africa'])]
+```
+
+6 Calculate the total population in each region
+
+```{python}
+world_data.groupby('region')['population'].sum()
+```
+
+(7) Get the number of countries in each region for the year 2018.
+
+```{python}
+world_data.loc[world_data['year'] == 2018].groupby('region').size()
+```
+
+## Introduction to plotting
+
+Although it's essential to quantitatively assess any conclusion drawn from the data, the human visual system is still one of the most advanced apparatus to detect patterns in data and it allows for quick exploration of complex relationships. Visualizations are also a highly efficient way of communicating insights drawn from the data. Therefore, it is important to know how to graphically represent the underlying data in a way that is suitable for humans to understand.
+
+There are many plotting packages in Python, making it possible to create diverse visualizations such as interactive web graphics, 3D animations, statistical visualizations, and map-based plots. When starting out, it can be helpful to find an example of how a plot looks that you want to create and then copy and modify that code. Examples of plots can be found in many excellent online Python plotting galleries, such as [this](https://matplotlib.org/gallery.html), [this](https://seaborn.pydata.org/examples/), and [this](https://python-graph-gallery.com/all-charts/). 
+
+Our focus will be on two of the most useful packages for researchers: `matplotlib`, which is a robust, detail-oriented, low level plotting interface, and `seaborn`, which provides high level functions on top of `matplotlib` and allows the plotting calls to be expressed more in terms what is being explored in the underlying data rather than what graphical elements to add to the plot.  The high-level figures created by `seaborn` can be configured via the `matplotlib` parameters, so learning these packages in tandem is useful.
+
+
+By default, plots are displayed in a separate window rather than within the notebook. To change this option and always display plots in the notebook, run the following line. Note that in newer versions of the notebook this might not be needed, but it's good the be explicit.
+
+```{python}
+# %matplotlib inline
+# Note that this will only need to be done the first time you create a plot in a notebook
+# all subsequent plots will show up as expected.
+```
+
+To facilitate the understanding of plotting concepts, the initial examples here will not include data frames, but instead have simple lists holding just a few data points.
+To create a line plot, the `plot()` function from `matplotlib` can be used.
+
+```{python}
+import matplotlib.pyplot as plt
+
+x = [1, 2, 3, 4]
+y = [1, 2, 4, 3]
+plt.plot(x ,y)
+```
+
+Using `plot()` like this is not very explicit since a few things happens "under the hood" e.g. a figure is automatically created and it is assumed that the plot should go into the currently active region of this figure. This gives little control over exactly where to place the plots within a figure and how to make modifications the plot after creating it, e.g. adding a title or labeling the axis.
+
+To facilitate modifications to the plot, it is recommended to use the object oriented plotting interface in `matplotlib`, where an empty figure and at least one axes object is explicitly created before a plot is added to it. This figure and its axes object are assigned to variable names which are used for plotting. In `matplotlib`, an axes object refers to what you would often call a subplot colloquially and it is named "axes" because it consists of an x-axis and a y-axis by default.
+
+```{python}
+fig, ax = plt.subplots()
+```
+
+Calling `subplots()` returns two objects, the figure and its axes object. Plots can be added to the axes object of the figure using the name we assigned to the returned axes object (`ax` by convention).
+
+```{python}
+fig, ax = plt.subplots()
+ax.plot(x, y)
+```
+
+To create a scatter plot, use `scatter()` instead of `plot()`.
+
+```{python}
+fig, ax = plt.subplots()
+ax.scatter(x, y)
+```
+
+Plots can also be combined together in the same axes. The line style and marker color can be changed to facilitate viewing the elements in th combined plot.
+
+```{python}
+fig, ax = plt.subplots()
+ax.scatter(x, y, color='red')
+ax.plot(x, y, linestyle='dashed')
+```
+
+And plot elements can be resized.
+
+```{python}
+fig, ax = plt.subplots()
+ax.scatter(x, y, color='red', s=100)
+ax.plot(x, y, linestyle='dashed', linewidth=3)
+```
+
+It is common to modify the plot after creating it, e.g. adding a title or label the axis.
+
+```{python}
+fig, ax = plt.subplots()
+ax.scatter(x, y, color='red')
+ax.plot(x, y, linestyle='dashed')
+
+ax.set_title('Line and scatter plot')
+ax.set_xlabel('Measurement X')
+```
+
+The scatter and line plot can easily be separated into two subplots within the same figure. Instead of assigning a single returned axes to `ax`, the two returned axes objects are assigned to `ax1` and `ax2` respectively.
+
+```{python}
+fig, (ax1, ax2) = plt.subplots(1, 2)
+# The default is (1, 1), that's why it does not need
+# to be specified with only one subplot
+```
+
+To prevent plot elements, such as the axis ticklabels from overlapping, `tight_layout()` method can be used.
+
+```{python}
+fig, (ax1, ax2) = plt.subplots(1, 2)
+fig.tight_layout()
+```
+
+The figure size can easily be controlled when it is created.
+
+```{python}
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4)) # This refers to the size of the figure in inches when printed or in a PDF
+fig.tight_layout()
+```
+
+Bringing it all together to separate the line and scatter plot.
+
+```{python}
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
+ax1.scatter(x, y, color='red')
+ax2.plot(x, y, linestyle='dashed')
+
+ax1.set_title('Scatter plot')
+ax2.set_title('Line plot')
+fig.tight_layout()
+```
+
+> #### Challenge 1
+> 
+> 1. There are a plethora of colors available to use in `matplotlib`. Change the color of the line and the dots in the figure using [your favorite color from this list](https://stackoverflow.com/a/37232760/2166823).
+> 2. Use the documentation to also change the styling of the line in the line plot and the type of marker used in the scatter plot (you might need to search online for this).
+
+
+### Saving graphs
+
+Figures can be saved by calling the `savefig()` method and specifying the name of file to create. The resolution of the figure can be controlled by the `dpi` parameter.
+
+```{python}
+fig.savefig('scatter-and-line.png', dpi=300)
+```
+
+A PDF-file can be saved by changing the extension in the specified file name. Since PDF is a vector file format, there is not need to specify the resolution.
+
+```{python}
+fig.savefig('scatter-and-line.pdf')
+```
+
+This concludes the customization section. The concepts taught here will be applied in the next section on how to choose a suitable plot type for data sets with many observations.
+
+
+## Plotting data frames
+
+
+If the data frame from the previous lecture is not loaded, read it in first.
+
+```{python}
+import pandas as pd
+
+# world_data = pd.read_csv('../world-data-gapminder.csv')
+# If not saved to disk yesterday
+world_data = pd.read_csv('https://raw.githubusercontent.com/UofTCoders/2018-09-10-utoronto/gh-pages/data/world-data-gapminder.csv')
+```
+
+```{python}
+fig, ax = plt.subplots()
+ax.scatter(x='year', y='population', data=world_data)
+```
+
+The reason for the appearance of this graph is that one scatter dot has been added for each year for every country. To instead see how the world's total population has changes over the years, the population for  all countries for each year needs to be summed together. This can be done using the data frame techniques from the previous lecture.
+
+```{python}
+# One could also do `as_index=False` with `groupby()`
+world_pop = world_data.groupby('year')['population'].sum().reset_index()
+
+fig, ax = plt.subplots()
+ax.scatter(x='year', y='population', data=world_pop)
+```
+
+This plot shows how the world population has been steadingly increasing since the 1800s and dramatically picked up pace in the 1950s.
+
+It is possible to use `matplotlib` in this way to explore visual relationships in data frame. However, it gets complicated once we want to include more variable, e.g. stratifying the data in subplots based on region and income level in the example above would include writing double loops and keeping track of plot layout and grouping variables manually.
+
+
+## Visual data exploration with `seaborn`
+
+When visually exploring data with lots of variables, it is in many cases easier to think in terms of what is to be explored in the data, rather than what graphical elements are to be added to the plot. For example, instead of instructing the computer to "go through a data frame and plot any observations of country-X in blue, any observations of country-Y in red, etc", it can be easier to just type "color the data by country".
+
+Facilitating semantic mappings of data variable to graphical elements is one of the goals of the [`seaborn`](https://seaborn.pydata.org/introduction.html#introduction) plotting package.
+Thanks to its functional way of interfacing with data, only minimal changes are required if the underlying data change or to switch the type of plot used for the visualization. `seaborn` provides a language that facilitates thinking about data in ways that are conducive for exploratory data analysis and allows for the creation of publication quality plots with minimal adjustments and tweaking.
+
+The syntax of plotting with `seaborn` was introduced briefly already in the introductory lecture and it is similar to how matplotlib plots data frames. For example, to make the same scatter plot as above:
+
+```{python}
+import seaborn as sns
+
+sns.scatterplot(x='year', y='population', data=world_pop)
+```
+
+In addition to providing a data-centric syntax, `seaborn` also facilitates visualization of common statistical aggregations. For example, the when creating a line plot in `seaborn`, the default is aggregate and average all observations with the same value on the x-axis, and to create a shaded region representing the 95% confidence interval for these observations.
+
+```{python}
+sns.lineplot(x='year', y='population', data=world_data)
+```
+
+In this case, it would be more appropriate to have the shaded area describe the variation in the data, such as the standard deviation, rather than an inference about the reproducibility.
+
+```{python}
+sns.lineplot(x='year', y='population', data=world_data, ci='sd')
+```
+
+To change from showing the average world population per country per year to showing the total population for all countries per year, the `estimator` parameter can be used. Here, the shaded are is also removed with `ci=None`.
+
+```{python}
+# The `estimator` parameter is currently non-functional for sns.scatterplot, but will be added soon
+sns.lineplot(x='year', y='population', data=world_data, estimator='sum', ci=None)
+```
+
+## Changing graph aesthetics
+
+Before continuing the exploration of the world populatino data, let's discuss how to customize the appearance of our plots. The returned object is an matplotlib axes, so all configuration available through `matplotlib` can be applied to the returned object by first assigning it to a variable name (`ax` by convention).
+
+```{python}
+ax = sns.lineplot(x='year', y='population', data=world_data, estimator='sum', ci=None)
+ax.set_title('World population since the 1800s', fontsize=16)
+ax.set_xlabel('Year', fontsize=12)
+```
+
+In addition to all the customization available through the standard `matplotlib` syntax, `seaborn` also offers its own functions for changing the appearance of the plots.
+
+In essence, these functions are shortcuts to facilitate changing many `matplotlib` parameters. For example, a more effective approach than setting individual font sizes or colors of graphical elements is to set the overall size and style for all graphs.
+
+```{python}
+# TODO in general, be sure to link seaborn documentation where appropriate
+sns.set(context='talk', style='darkgrid', palette='pastel')
+sns.lineplot(x='year', y='population', data=world_data, estimator='sum', ci=None)
+```
+
+These functions are like changing the settings in a graphical program and will apply to all following plots. 
+
+> #### Challenge 2
+> 
+> Find out which styles and contexts are available. Try some of them out and choose your favorite style and contxt. *Hint* This information is available both through the built-in and the online documentation.
+
+For the rest of this tutorial, the `ticks` style will be used, 
+
+```{python}
+sns.set(context='notebook', style='ticks', font_scale=1.4)
+sns.lineplot(x='year', y='population', data=world_data, estimator='sum', ci=None)
+```
+
+```{python}
+# Unfortunately changing the font size reduces the number of ticklabels which in turn
+# automatically changes the formatting of the scientific notation to `1e10` for some reason
+# I files an issue for this (https://github.com/matplotlib/matplotlib/issues/12072)
+# 
+# The previous notation `1e9` can be returned by doing
+# `ax.ticklabel_format(useOffset=10, axis='y')`, but it looks slightly different
+```
+
+For styles that include the frame around the plot, there is a special `seaborn` function to remove the top- and leftmost borders (again by modifying the underlying `matplotlib` parameters).
+
+```{python}
+sns.lineplot(x='year', y='population', data=world_data, estimator='sum', ci=None)
+sns.despine()
+```
+
+If the style options exposed through `seaborn` are not sufficient, it is possible to change all plot parameters directly through the `matplotlib` [rc and style interfaces](https://matplotlib.org/users/customizing.html#customizing-matplotlib).
+
+## Exploring relationships between two quantitative variables
+
+As mentioned above, the strength of a descriptive plotting syntax is being able to describe the plot appearance in human-friendly vocabulary and have the computer assign variables to graphical objects accordingly. For example, to plot subsets of the data in different colors, the `hue` parameter can be used.
+
+```{python}
+sns.lineplot(x='year', y='population', hue='income_group', 
+            data=world_data, ci=None, estimator='sum')
+```
+
+This separation of the data shows that the population has risen the fastest in middle income countries.
+
+The plot can be made more accessible by changing the style of each line to not only rely on color to separate them.
+
+```{python}
+sns.lineplot(x='year', y='population', hue='income_group', style='income_group',
+            data=world_data, ci=None, estimator='sum')
+```
+
+Just like in the previous lecture, the values of the ordinal variable `income_group` are not listed in an intuitive order. A custom order can easily be specified by passing a list to the `hue_order` parameter, but this would have to be done for every plot. A better approach would be to encode the order in the data frame itself, using the top level `pandas` function `Categorical()`.
+
+```{python}
+world_data['income_group'] = (
+    pd.Categorical(world_data['income_group'], ordered=True,
+                   categories=['Low', 'Lower middle', 'Upper middle', 'High'])
+)
+world_data['income_group'].dtype
+```
+
+```{python}
+sns.lineplot(x='year', y='population', hue='income_group', style='income_group',
+             data=world_data, ci=None, estimator='sum')
+```
+
+The legend now has the colors in the expected order. This modification also ensures that when making plots with income groups on the x- or y-axis, they will be plotted in the right order.
+
+
+### Conditioning quantitative relationships on qualitative variables
+
+It is difficult to explore multiple categorical relationships within one single plot. For example, to see how the income groups compare within each region, the `hue` and `style` variables could be used for different variables, but this makes the plot very difficult to interpret.
+
+```{python}
+sns.lineplot(x='year', y='population', hue='income_group', style='region',
+            data=world_data, ci=None, estimator='sum')
+```
+
+An effective approach for exploring multiple categorical variables in a data set is to plot so-called "small multiples" of the data, where the same type of plot is used for different subsets of the data. These plots are drawn in rows and columns forming a grid pattern, and can be referred to as a "lattice", "facet", or "trellis" plot.
+
+Visualizing categorical variables in this manner is a key step in exploratory data analysis, and thus `seaborn` has a dedicated plot function for this, called `relplot()` (for "relational plot" since it visualizes the relationships between numerical variables). The syntax to `relplot()` is very similar to `lineplot()`, but we need to specify that the kind of plot we want is a line plot.
+
+```{python}
+# Create the same plot as above
+sns.relplot(x='year', y='population', hue='income_group', style='income_group', kind='line',
+            data=world_data, ci=None, estimator='sum')
+```
+
+The `region` variable can now be mapped to different facets/subplots in a grid pattern.
+
+```{python}
+# TODO switch this to some more interesting column if I have time
+sns.relplot(x='year', y='population', data=world_data, estimator='sum',
+            kind='line', hue='income_group', col='region', ci=None)
+```
+
+It's a little hard to see becuse the figure is very wide and has been shrunk to fit in the notebook. To avoid this, `relplot()` can use the `col_wrap` parameter to plot on several rows. The `height` and `aspect` parameters can be used to set the height and width of each facet.
+
+```{python}
+sns.relplot(x='year', y='population', data=world_data, estimator='sum',
+            kind='line', hue='income_group', col='region', ci=None,
+           col_wrap=3, height=2.5, aspect=1.3)
+```
+
+Facetting the plot by region reveals that the biggest absolute population increase happened among middle income countries in Asia. We will soon look closer on which countries are 
+
+The returned object from `relplot()` is a grid (a special kind of figure) with many axes, and can therefore not be placed within a preexisting figure. It is saved just as any `matplotlib` figure with `savefig()`, but has some special methods for easily changing plot aethetics on each axes. Remember that names such as `fig`, `ax`, and here `g`, are only by convention, and any variable name could have been used.
+
+```{python}
+g = sns.relplot(x='year', y='population', data=world_data,
+            kind='line', hue='income_group', col='region', ci=None,
+           col_wrap=3, height=2.5, aspect=1.3)
+
+g.set_titles('{col_name}', y=0.95)
+g.set_axis_labels(y_var='Population', x_var='Year')
+g.savefig('grid-figure.png')
+```
+
+Finally, we might want to keep the color as being per income group, but drawing one line per country. For this we can set `units='country'` and `estimator=None` (so don't aggregate, just draw one line per country with the raw values).
+
+```{python}
+sns.relplot(x='year', y='population', data=world_data, estimator=None, units='country',
+            kind='line', hue='income_group', col='region', ci=None,
+           col_wrap=3, height=2.5, aspect=1.3)
+```
+
+Two countries in Asia stand out in terms of total population. To find out which these are, we can filter the data.
+
+```{python}
+world_data.loc[world_data['year'] == 2018].nlargest(8, 'population')
+```
+
+> Challenge 3
+>
+> 1. To find out the total amount of CO2 released into the atmosphere, used the `co2_per_capita` and `population` columns to create a new column: `co2_total`.
+> 2. Plot the total CO2 for the world and for each region.
+> 3. Create a facetted plot comparing total CO2 levels across income groups and regions.
+
+```{python}
+world_data = world_data.rename(columns={'co2_per_capita': 'co2_per_capita'})
+```
+
+```{python}
+# Challenge 1
+
+# 1.
+world_data['co2_total'] = world_data['co2_per_capita'] * world_data['population']
+
+# 2.
+sns.relplot(x='year', y='co2_total', data=world_data, kind='line', ci=None, estimator='sum')
+sns.relplot(x='year', y='co2_total', data=world_data, kind='line', ci=None, estimator='sum', hue='region')
+
+# 3.
+sns.relplot(x='year', y='co2_total', data=world_data, kind='line', ci=None, estimator='sum',
+            hue='income_group', col='region', col_wrap=3, height=4)
+
+# Discuss what these plots tell us:
+# The world's total co2 emissions are rapidly increasing. Europe and the Americas have been the highest emitters for
+# many years, but have recently been overtaken by Asia, which is now producing around twice the amount of co2 compard
+# to Europe and America. But don't forget that we saw in the last lecture that the population in Asia is 5-6 times bigger
+# than in Europe and America!
+
+# It's important to look at both total production from a country because change within that single country has big
+# potential of reaching many people. Not plotted here, but also also important is to explore which countries are high in co2 per capita
+# since these might have more room to reduce the production. Of course, reality is more complicated. Some countries
+# might import goods that deamnd high co2 production in their manufactoring country instead of producing themselves
+# so they might "sponsor" the production in another countr, but would not show up high in this list.
+```
+
+To continue exploring the CO2 emissions we started to look at in the last challenge, let's use the other type of plot for comparing quantitative variables: `scatterplot()`. This is the default in the  `relplot()` function.
+
+As mentioned in the discussion above, in addition to considering the total amount of CO2 produced per country, it is important to explore the CO2 produced per citizen.
+
+```{python}
+sns.relplot(x='co2_total', y='co2_per_capita', data=world_data)
+```
+
+This looks funky, and not quite as expected... the reason is that we have plotted multiple data points per country, one for each year. This can be confusing since we don't know which dot is for which year and this plot is probably not what we want. We can filter the data to focus on a specific year. Unfortunately, there is not CO2 measurements available for the last few years. To find out in which years there are countries with CO2 measurement, drop the NAs in `co2_per_capita` and look at the min and max value.
+
+```{python}
+world_data.dropna(subset=['co2_per_capita'])['year'].agg(['min', 'max'])
+```
+
+Now subset the data for the latest available year with CO2 measurements, 2014.
+
+```{python}
+world_data_2014 = world_data.loc[world_data['year'] == 2014]
+sns.relplot(x='co2_total', y='income', data=world_data_2014)
+```
+
+Here we can see that there are a few countries in the world that have significantly and one coutnry that is rather high in both measurements. 
+
+Just as before it is possible to map plot semantics and facet the plot according to variables in the data set. `scatterplot()` can also scale the dot size according to a variable in the data set.
+
+```{python}
+# `sizes` controls the dots min and max size
+sns.relplot(x='co2_total', y='co2_per_capita', hue='income_group', size='population',
+            data=world_data_2014, sizes=(40, 400))
+```
+
+Unsuprinsingly, some of the countries that are high in the total co2_emissions are also the most popolous countries. The trends between different regions can now be easily compared by facetting the data by region.
+
+```{python}
+sns.relplot(x='co2_total', y='co2_per_capita', hue='income_group', size='population',
+            data=world_data_2014, sizes=(40, 400), col='region', col_wrap=3, height=4)
+```
+
+Already here we can get a pretty good idea of which some of these countries are. The high emission middle income countries in Asia are likely China and India, while the American country high in both total emissions and emissions per capita must be the USA. However, there are some curious dots, like which the high co2_capita regions are in Asia and the Americas.
+
+
+> #### Challenge
+>
+> Let's use some of the aggregation methods from yesterday to complement the plots we have just made.
+>
+> 1. Find out which are the 10 countries with the highest co2 emissions per capita. 
+> 2. Find out which are the 10 countries with the highest total co2 emissions.
+> 3. Which 10 countries have produce the most CO2 in total since the 1800s?
+
+```{python}
+# 1.
+world_data_2014.nlargest(10, 'co2_per_capita')
+```
+
+```{python}
+# 2.
+world_data_2014.nlargest(10, 'co2_per_capita')
+```
+
+```{python}
+# 3.
+world_data.groupby('country')['co2_total'].sum().nlargest(10)
+```
+
+In addition to what we have just seen, an interesting aspect to explore is how this relationship between per capita and total CO2 emissions has changed over time for different income groups. As we have seen before, this can be explored in a line graph, but an alternative approach which allows us to see the spread at each point in time is to subset certain years from the data and create a facet for each year:
+
+```{python}
+world_data_1920_2018 = world_data.loc[world_data['year'].isin([1920, 1940, 1960, 1980, 2000, 2014])]
+                                 
+sns.relplot(x='co2_total', y='co2_per_capita', col='year', hue='income_group',
+            data=world_data_1920_2018, col_wrap=3, height=3.5)
+```
+
+## How to know which relationships to start exploring.
+
+
+In the exercises above, we chose suitable variables to illustrate the plotting concepts. Often when doing EDA, it will not be as easy to know what comparison to start with. Unless you have good reason for choosing to look at a particular relationship, starting by plotting the pairwise relationships of all quantitative variables can be helpful.
+
+```{python}
+# Use 2014 data since we know CO2 has observations for that year
+# This might take some time
+sns.pairplot(world_data_2014)
+```
+
+The year column is not that insightful since there is only one year in the data. Removing that column gives more space for the rest of the plots.
+
+```{python}
+# TODO suggest add a 'mirror' keyword to pairplot
+sns.pairplot(world_data_2014.drop(columns='year'))
+```
+
+Each plot on the diagonal shows the distribution of a single variable in a histogram. The plots below the diagonal shows the relationship between two numerical variables in a scatter plot. The plots above the diagonal are mirror images of those below the diagonal.
+
+Plotting all pairwise relationships like this gives a great overview for what to look into next. For example, the relationships we explored above between child mortality and children per women or those between `co2_per_capita` and `co2_total` can also be seen here, as can other unexplored relationships. It is possible to quantitative the strength of these relationships by checking the Pearson correlation coefficients between columns.
+
+```{python}
+world_data_2014.drop(columns='year').corr()
+```
+
+With so many columns, it is slow to process all the information as numbers. A higher bandwidth operation is to let our brain interpret colors for the strength of the relationships through a heatmap.
+
+```{python}
+# This and the correlation above might be moved to lecture 4
+sns.heatmap(world_data_2014.drop(columns='year').corr())
+```
+
+The heatmap can be made more informative by changing to a diverging colormap which is generally recommended when there is a natural middle points (such as 0 in our case). Optionally the heatmap can be annotated with the correlation coefficients.
+
+```{python}
+# This and the correlaition above might be moved to lecture 4
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.heatmap(world_data_2014.drop(columns='year').corr(), annot=True, ax=ax, cmap='coolwarm')
+```
+
+There are more formal ways of interrogating the effect between different variables, such as regression which are outside the scope of this lecture. However, the pairwise scatter plot and correlation coefficient matrix and quick ways to get an informative overview of how the data frame columns relate to each other.
+
+Let's zoom in on the relationship between income and life expectancy which appears to be quite strong.
+
+```{python}
+# Make this a challenge where they learn how to find things on stackoverflow
+ax = sns.scatterplot(x='income', y='life_expectancy', data=world_data_2014)
+```
+
+This relationship appears to be log linear and can be visualized with the x-axis set to log-scale.
+
+
+> #### Challenge
+>
+> 1. Find out how to change the x-axis to be log-scaled. Search online for how to change the scale of a matplotlib axes object. Remember that seaborn plots return matplotlib axes objects, so all matplotlib function to modify the axes will work on this plot. Good sites to use are the documentation pages for the respecitve package, and stackoverflow. However, it is often the fastest to type in a well chosen query in your favorite search engine.
+> 2. In the logged plot, color the dots according to the region of the observation.
+
+```{python}
+# Challenge solutions
+# 1.
+ax = sns.scatterplot(x='income', y='life_expectancy', data=world_data_2014)
+ax.set_xscale('log')
+```
+
+```{python}
+# Challenge solutions
+# 2.
+ax = sns.scatterplot(x='income', y='life_expectancy', data=world_data_2014, hue='region')
+ax.set_xscale('log')
+```
+
+Another interesting realtionship we could see from the `pairplot` was how child mortality is related to how many children are born per woman. A common misconception is that saving poor children will lead to overpopulation. However, using the same approach for the CO2 data we can section out years of the data and look at how this relationship has changed over time.
+
+```{python}
+world_data_1920_2018 = world_data.loc[world_data['year'].isin([1920, 1940, 1960, 1980, 2000, 2018])]
+                                 
+sns.relplot(x='children_per_woman', y='child_mortality', col='year', hue='income_group',
+            data=world_data_1920_2018, col_wrap=3, height=3.5)
+```
+
+Now it is clearer to see what is going on. Reducing child mortality is correlated with smaller family sizes. As more children survive, parents can feel more secure with a smaller family size. Ending poverty is also related to these variables, since most high income countries are found in the ower left corner of the plots (remember that the income gruop is classified based on 2018 year's income).
+
+It is important to note that from a plot like this, it is not possible to tell causation, just correlation. However, in the [gapminder video library](https://www.gapminder.org/videos/) there are a few videos on this topic, including [this](https://www.gapminder.org/answers/will-saving-poor-children-lead-to-overpopulation/) and [this](https://www.gapminder.org/videos/population-growth-explained-with-ikea-boxes/) discussing how reducing poverty can help slow down population growth through decreased family sizes. Current estimations suggests that the word population will stabilize around 11 billion ppl and the children per woman will be close to 2 worldwide in year 2100.
+
+
+## Exploring a single quantitative variable across multiple levels of a categorical variable
+
+When exploring a single quantitative variable, we can choose between plotting every data point (e.g. categorical scatterplots such as swarm plots and strip plots), an approximation of the distribution (e.g. histograms and violinplots), or several distribution statistics including measures of central tendency (e.g. boxplots and barplots).
+
+A good place to start is to visualize the variable's distribution with `distplot()`.
+
+```{python}
+# Let's look at life expectancy during 2018
+world_data_2018 = world_data.loc[world_data['year'] == 2018]
+sns.distplot(world_data_2018['life_expectancy'])
+```
+
+The line is a KDE (kernel density estimate) plot, as seen previously in the pairplot. This can be thought of as a smoothened histogram.
+
+
+`distplot()` can be customized to increase the number of bins and the bandwidth of the kernel. These are both calculated according to heuristics for what should be good numbers for the underlying data, but it is good to know how to control them.
+
+```{python}
+sns.distplot(world_data_2018['life_expectancy'], bins=30, rug=True,
+             kde_kws={'bw':1, 'color':'black'})
+```
+
+The rug plot shows exactly where each data point is along the x-axis. To compare distributions between values of a categorical variables, violinplot are often used. These consist of two KDEs mirrored across the midline.
+
+```{python}
+sns.violinplot(x='life_expectancy', y='income_group', data=world_data_2018)
+```
+
+Since `income_group` was defined as an ordered categorical variable previously, this order is preserved when distributing the income groups along the yaxis.
+
+There is notable variation in life expectancy between income groups, people in wealthier countries live longer. This variation contribute sto the mulitmodality seen in the first distribution plot of the life expectancy for all countries in the world. However, there is also large overlap between income groups and variation within the groups, so there are more variables affecting the life expectancy than just the income.
+
+Dissecting multimodal distributions in this manner and trying to find underlying explaining variables to why a distribution appears to consist of many small distribution (multimodal) is common practice in EDA. It looks like some income groups, e.g. "high", still consist of multimodal distributions. To explore these further, facetting can be used just as previously. The categorical equivalent of `relplot` is `catplot` (categorical plot).
+
+```{python}
+sns.catplot(x='life_expectancy', y='income_group', data=world_data_2018)
+```
+
+The default is a `stripplot` a type of categorical scatterplot where the dots are randomly jittered to not overlap. This is very fast, but it is sometimes hard to see how many dots are in a group due to overlap of the graphical elements. A more ordered approach is to create a another type of categorical scatterplot, a so called swarmplot, where the dots are positioned so that they are guaranteed not to overlap.
+
+```{python}
+sns.catplot(x='life_expectancy', y='income_group', data=world_data_2018, kind='swarm')
+```
+
+The swarm plot gives us a better sense of the overall appearance of the distribution than the stripplot, and we can see the same bimodality in the high income group as seen in the violinplot, but which was hard to see in the stripplot.
+
+
+Now it is clear where the most points are. A drawback is that this method can be slow for large datasets. For really large datasets, even stripplot is slow and it is necessary to approximate the distributions with a violinplot instead of showing each observation. Or show some distribution statistics instead, such as with a boxplot (more on that later).
+
+Now we can use color to find out that differences in regions are often related to income level.
+
+```{python}
+# Will update this to look prettier
+sns.catplot(x='life_expectancy', y='region', data=world_data_2014, kind='box',
+            col='income_group', col_wrap=2)
+```
+
+The variable levels are automatically ordered and it is easy to see how life expectancy generally grow with higher average income.
+
+
+One can see that the income might be more indicative.
+
+
+WIth the powerful gridplots it is now easy to see how this income distribution has changed  . In contrast to a line plot with the average change over time, we can here see how the distribution itself changes, not just the average. While countries in general has increased their life expectancy, differences can be seen in how they have done it: Europe and the Americas has gone from having countries with high and low life_expectancy levels to tighter distributions where all countries have high, while africa has transitioned from most countries having low life_exp through a period of very diverse life lengths depending on country.
+
+```{python}
+# If both columns can be interpreted as numerical, the orient keyword can be added to be explicit
+sns.catplot(x='life_expectancy', y='year', orient='horizontal', data=world_data_1920_2018, kind='violin',
+            col='region', col_wrap=3, color='lightgrey')
+```
+
+Let's see how much of the variation during the transition in African life expectancy can be explained by geographically close regions performing differently. First how many sub_regions are there in each Africa.
+
+```{python}
+world_data_1920_2018.groupby('region')['sub_region'].nunique()
+```
+
+Two, what are those.
+
+```{python}
+world_data_1920_2018.groupby('region')['sub_region'].unique()
+```
+
+Let's see if sub-saharan and northern Africa have had different development when it comes to life expectancy.
+
+```{python}
+# The split parameter saves some space and looks slick
+africa = world_data_1920_2018.loc[world_data_1920_2018['region'] == 'Africa']
+sns.catplot(x='life_expectancy', y='year', orient='horizontal', data=africa, kind='violin',
+            hue='sub_region', palette='pastel', split=True)
+```
+
+```{python}
+world_data.dropna(subset=['years_in_school_women'])['year'].agg(['min', 'max'])
+```
+
+> #### Challenge
+> 1. Subset data frame for the years 1975, 1995, and 2015
+> 1. Make a new column of ratio women men in education
+> 2. plot for regions and income groups and times (reword)
+
+```{python}
+# Challenge solutions
+# 1.
+world_data_1970_2015 = world_data.loc[world_data['year'].isin([1975, 1995, 2015])].copy()
+```
+
+```{python}
+# 2.
+world_data_1970_2015['women_men_school_ratio'] = world_data_1970_2015['years_in_school_women'] / world_data_1970_2015['years_in_school_men']
+# world_data_1970_2015['women_men_school_ratio']
+```
+
+```{python}
+# 3a.
+sns.catplot(y='women_men_school_ratio', x='year', data=world_data_1970_2015, hue='region', dodge=True, kind='point')
+```
+
+```{python}
+# 3b.
+sns.catplot(y='women_men_school_ratio', x='year', data=world_data_1970_2015, hue='income_group', dodge=True, kind='point')
+```

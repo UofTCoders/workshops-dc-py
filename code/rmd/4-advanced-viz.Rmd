@@ -1,0 +1,621 @@
+---
+jupyter:
+  jupytext:
+    formats: ipynb,rmd//Rmd
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.1'
+      jupytext_version: 1.2.1
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+## Lesson preamble
+
+### Lecture objectives
+
+- Understand which types of figures are suitable to create from raw data.
+- Learn how to avoid common pitfalls when plotting large data sets.
+- Learn about tidy data.
+- Transform data from the long to wide format.
+
+### Lecture outline
+
+- Visualization tips and tricks
+    - Choose informative plots for categorical data (35 min)
+    - Making plots accessible through suitable color choices (10 min)
+    - Avoiding saturated plots (40 min)
+- Reshaping with data with `pivot()`, `pivot_table()`, and `melt()` (40 min)
+
+
+# Visualization tips and tricks
+
+```{python}
+# Setup by loading the data set from the previous lecture
+import pandas as pd
+
+world_data = pd.read_csv('../data/world-data-gapminder.csv')
+# If you don't have the dataset locally 
+# world_data = pd.read_csv('https://raw.githubusercontent.com/UofTCoders/2018-09-10-utoronto/gh-pages/data/world-data-gapminder.csv')
+
+world_data.head()
+```
+
+## Choosing informative plots for categorical data
+
+When visualizing data it is important to explore different plotting options and reflect on which one best conveys the information within the data. In the following code cells, a sample data set is loaded from the `seaborn` data library in order to illustrate some advantages and disadvantages between categorical plot types. This is the same data as was used in lecture 1 and contains three different species of iris flowers and measurements of their sepals and petals.
+
+First let's set the `seaborn` style to something different than last lecture, and to subset the data to only include observations from 2018.
+
+```{python}
+import seaborn as sns
+
+sns.set(context='notebook', style='darkgrid', palette='muted', font_scale=1.3)
+
+world_data_2018 = world_data.loc[world_data['year'] == 2018]
+```
+
+### Bar plots
+
+A common visualization when comparing a groups is to create a barplot of the means of each group and plot them next to each other.
+
+```{python}
+sns.barplot(x='region', y='income', data=world_data_2018)
+```
+
+This barplot shows the mean and the 95% confidence interval. Since the `seaborn` plotting functions returns a `matplotlib` axes object, these can be used with any `matplotlib` functions. Let's use this to our advantage to create a visualization comparison between four types of distribution or estimate plots. By creating a figure using `subplots()`, the `seaborn` plotting functions can be arranged as subplots in a grid. The syntax is slightly different from doing this with functions that are native to `matplotlib`, and the axes in which the `seaborn` function will plot needs to be specified with the `ax` parameter.
+
+```{python}
+plt.scatter(x='income', y='population',
+           label='hey', data=world_data)
+```
+
+```{python}
+fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 8),
+                                             sharex=True, sharey=True)
+ax1.scatter(x='income', y='population',
+           label='hey', data=world_data)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+
+fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 8),
+                                             sharex=True, sharey=True)
+fig.suptitle('Visualization comparison', y=1.02) # `y` is used to place the title a little bit higher up
+
+sns.barplot(x='region', y='income', data=world_data_2018, ax=ax1)
+sns.boxplot(x='region', y='income', data=world_data_2018, ax=ax2)
+sns.violinplot(x='region', y='income', data=world_data_2018, ax=ax3, width=1.4)
+sns.swarmplot(x='region', y='income', data=world_data_2018, ax=ax4)
+
+# Remove the axis labels for region and income where it's not needed
+# ax1.set_xlabel('')
+# ax2.set_xlabel('')
+# ax2.set_ylabel('')
+# ax3.set_xlabel('')
+# ax4.set_xlabel('')
+# ax4.set_ylabel('')
+
+fig.tight_layout()
+```
+
+>#### Challenge 3
+>
+>1. How many data points and/or distribution statistics are displayed in each of these plots 
+>2. Out of the these plots, which one do you think is the most informative and why? Which is the most true to the underlying data?
+
+
+### Pros and cons of different graph types
+
+We will deepen the discussion around some of these ideas, in the context of the following plot:
+
+![*Reproduced with permission from [Dr. Koyama's poster](http://biostat.mc.vanderbilt.edu/wiki/pub/Main/TatsukiKoyama/Poster3.pdf)*](./img/dynamite-bars.png)
+
+*Reproduced with permission from [Dr. Koyama's poster](http://biostat.mc.vanderbilt.edu/wiki/pub/Main/TatsukiKoyama/Poster3.pdf)*
+
+It is generally advisable to avoid "decorative" plot elements that do not convey extra information about the data, *especially* when such elements hide the real data. An early champion of this idea was Edward Tufte, who details how to reduce so called non-data ink and many other things in his book [The visual display of quantitative information](https://www.edwardtufte.com/tufte/books_vdqi). In the bar chart above, the only relevant information is given by the where the rectangles of the bars ends on the y-axis, the rest of it is unnecessary. Instead of using the rectangle's height, a simpler marker (circle, square, etc) could have been used to indicate the height on the y-axis. Note that the body of the rectangle is not representative for where the data lies, there are probably no data points close to 0, and several above the rectangle.
+
+
+Barplots are especially misleading when used as data summaries, as in the
+example above. In a summary plot, only two distribution parameters (a measure of
+central tendency, e.g. the mean, and error, e.g. the standard deviation or a
+confidence interval) are displayed, instead of showing all the individual data
+points. This can be highly misleading, since different underlying distributions
+can give rise to the same summary plot. We also have no idea of how many observations there are in each group. These
+shortcomings become evident when comparing the barplot to the underlying
+distributions that were used to create them:
+
+![*Reproduced with permission from [Dr. Koyama's poster*](http://biostat.mc.vanderbilt.edu/wiki/pub/Main/TatsukiKoyama/Poster3.pdf)](./img/dynamite-vs-dists.png)
+
+*Reproduced with permission from [Dr. Koyama's poster](http://biostat.mc.vanderbilt.edu/wiki/pub/Main/TatsukiKoyama/Poster3.pdf)*
+
+Immediately, you can see that conclusions drawn from the barplot, such that A
+and B have the same outcome, are factually incorrect. The distribution in D is
+bimodal, so representing that with a mean would be like observing black and
+white birds and conclude that the average bird color is grey, it's nonsensical.
+If we would have planned our follow up experiments based on the barplot alone,
+we would have been setting ourselves up for failure! Always be sceptical when
+you see a barplot in a published paper, and think of how the underlying
+distribution might look (note that barplots are more acceptable when used to
+represents counts, proportion or percentages, where there is only one data point
+per group in the data set).
+
+Boxplots and violin plots are more meaningful data summaries as they represent more than just two distribution parameters (such as mean +/- sd). However, these can still be misleading and it is often the most appropriate to show each individual observation with a dot/hive/swarm plot, possibly combined with a superimposed summary plot or a marker for the mean or median *if* this additional information is useful. One exception, when it is not advisable to show all data points, is when the data set is gigantic and plotting each individual observation would oversaturate the chart. In that case, plot summary statistics or a 2D histogram (more on this later).
+
+Here is an example of how a violinplot can be combined together with the individual observations in `seaborn`.
+
+```{python}
+fig, ax = plt.subplots(figsize=(10, 6))
+
+sns.violinplot(x='region', y='income', data=world_data_2018,
+               color='white', inner=None, ax=ax, width=1.4)
+sns.swarmplot(x='region', y='income', data=world_data_2018, ax=ax)
+
+ax.set_ylabel('Sepal Length')
+ax.set_xlabel('')
+```
+
+Plotting elements have a default order in which they appear. This can be changed by explicitly via the `zorder` parameter.
+
+```{python}
+fig, ax = plt.subplots(figsize=(10, 6))
+
+sns.violinplot(x='region', y='income', data=world_data_2018,
+               color='white', inner=None, ax=ax, width=1.4)
+sns.swarmplot(x='region', y='income', data=world_data_2018,
+              ax=ax, zorder=0)
+
+ax.set_ylabel('Sepal Length')
+ax.set_xlabel('')
+```
+
+This is not very helpful in this particular case, but it is good to be aware of the `zorder` parameter if the need arises to combine plots.
+
+
+>#### Challenge 4
+>
+>1. Combine a `stripplot()` with a `boxplot()`. Set the `jitter` parameter to distribute the dots so that they are not all on one line.
+
+
+## Making plots accessible through suitable color choices
+
+Colour blindness is common in the population, and red-green colour blindness in particular affects 8% of men and 0.5% of women. Guidelines for making your visualizations more accessible to people affected by colour blindness, will in many cases also improve the interpretability of your graphs for people who have standard color vision. Here are a couple of examples:
+
+Don't use jet rainbow-coloured heatmaps. Jet colourmaps are often the default heatmap used in many visualization packages (you've probably seen them before). 
+
+![](./img/heatmap.png)
+
+Colour blind viewers are going to have a difficult time distinguishing the meaning of this heat map if some of the colours blend together.
+
+![](./img/colourblind.png)
+
+
+The jet colormap should be avoided for other reasons, including that the sharp transitions between colors introduces visual threshold levels that do not represent the underlying continuous data. Another issue is luminance, or brightness. For example, your eye is drawn to the yellow and cyan regions, because the luminance is higher. This can have the unfortunate effect of highlighting features in your data that don't actually exist, misleading your viewers! It also means that your graph is not going to translate well to greyscale in publication format.
+
+More details about jet can be found in [this blog post](https://jakevdp.github.io/blog/2014/10/16/how-bad-is-your-colormap/) and [this series of posts](https://mycarta.wordpress.com/2012/05/12/the-rainbow-is-dead-long-live-the-rainbow-part-1/). In general, when presenting continuous data, a perceptually uniform colormap is often the most suitable choice. This type of colormap ensures that equal steps in data are perceived as equal steps in color space. The human brain perceives changes in lightness as changes in the data much better than, for example, changes in hue. Therefore, colormaps which have monotonically increasing lightness through the colormap will be better interpreted by the viewer. More details and examples of such colormaps are available in the [`matplotlib` documentation](http://matplotlib.org/users/colormaps.html), and many of the core design principles are outlined in [this entertaining talk](https://www.youtube.com/watch?v=xAoljeRJ3lU).
+
+The default colormap in `matplotlib` is `viridis` which to have monotonically increasing lightness throughout. There is also `cividis`, which is designed to look the same for common colorblindess as for people without colorblindness. Heatmaps is a good example on where color matters
+
+
+In a correlation matrix, the diagonal is a column's correlaiton with itself, so it is always perfect (1). The same values are mirrored above and below the diagonal.
+
+
+Another approach to improve visualization clarity is to use different symbols for the groups and to change the color palette to one specifically designed to work well for common colorblindness.
+
+```{python}
+# To see all available palettes, set it to an empty string and view the error message
+sns.relplot(x='income', y='pop_density', hue='region', style='region', 
+            data=world_data_2018, palette='colorblind')
+```
+
+>#### Challenge 5 (optional)
+>
+>1. Take one of the figures created previously and upload it to [this website](http://www.color-blindness.com/coblis-color-blindness-simulator/) to see how it  looks in the color blindness simulator.
+
+
+## Avoiding saturated plots
+
+Summary plots (especially bar plots) were previously mentioned to potentially be misleading, and it is often most appropriate to show every individual observation with a dot plot or the like, perhaps combined with summary markers where appropriate. But, what if the data set is too big to visualize every single observations? In large data sets, it is often the case that plotting each individual observation would oversaturate the chart.  
+
+
+When plotting a data frame, `matplotlib` plotting functions can be made aware of the structure of the data by specifying the `data` parameter and the `x` and `y` parameters can then be specified just by passing the name of a column in the data frame as a string.
+
+```{python}
+diamonds = pd.read_csv('https://vincentarelbundock.github.io/Rdatasets/csv/ggplot2/diamonds.csv', index_col=0)
+diamonds.head()
+```
+
+```{python}
+fig, ax = plt.subplots()
+ax.scatter('carat', 'price', data=diamonds)
+```
+
+Because this is a dataset with 33,288 observations, visualizing it in two dimensions creates a graph that is incredibly oversaturated. Oversaturated graphs make it *far more* difficult to glean information from the visualization. Maybe adjusting the size of each observation could help?
+
+```{python}
+fig, ax = plt.subplots()
+ax.scatter('carat', 'price', data=diamonds, s=1)
+```
+
+That's a bit better. Reducing the transparency might help further.
+
+```{python}
+fig, ax = plt.subplots()
+ax.scatter('carat', 'price', data=diamonds, s=1, alpha=0.1)
+```
+
+This is clearer than initially, but does still not reveal the full structure of the underlying data. Before proceeding, add axis labels and remove the axis lines (spines) on the top and the right.
+
+
+The result is still not satisfactory, which illustrates that a scatter plot is simply not a good choice with huge data sets. A more suitable plot type for this data, is a so called `hexbin` plot, which essentially is a two dimensional histogram, where the color of each hexagonal bin represents the amount of observations in that bin (analogous to the height in a one dimensional histogram). 
+
+```{python}
+fig, ax = plt.subplots()
+ax.hexbin('carat', 'price', data=diamonds)
+```
+
+This looks ugly because the bins with zero observations are still colored. This can be avoided by setting the minimum count of observations to color a bin.
+
+```{python}
+fig, ax = plt.subplots()
+ax.hexbin('carat', 'price', data=diamonds, mincnt=1)
+# ax.hexbin('income', 'life_expectancy', data=survey, mincnt=1)
+```
+
+The distribution of the data is not more akin to that of the scatter plot. To know what the different colors represent, a colorbar needs to be added to this plot. The space for the colorbar will be taken from a plot in the current figure.
+
+```{python}
+fig, ax = plt.subplots()
+# Assign to a variable to reuse with the colorbar
+hex_plot = ax.hexbin('carat', 'price', data=diamonds, mincnt=1)
+# Create the colorbar from the hexbin plot axis
+cax = fig.colorbar(hex_plot)
+```
+
+Notice that the overall figure is the same size, and the axes that contains the hexbin plot shrank to make room for the colorbar. To remind ourselves what is plotted, axis labels can be added like previously.
+
+```{python}
+fig, ax = plt.subplots()
+hex_plot = ax.hexbin('carat', 'price', data=diamonds, mincnt=1, gridsize=50)
+sns.despine()
+cax = fig.colorbar(hex_plot)
+
+ax.set_title('Diamond prices')
+ax.set_xlabel('Carat')
+ax.set_ylabel('Price')
+cax.set_label('Number of observations')
+```
+
+It is now clear that the yellow area represents over 2000 observations!
+
+```{python}
+diamonds_subset = diamonds.loc[(diamonds['carat'] < 1.3) & (diamonds['price'] < 2500)]
+
+fig, ax = plt.subplots()
+hexbin = ax.hexbin('carat', 'price', data=diamonds_subset, mincnt=1)
+sns.despine()
+cax = fig.colorbar(hexbin)
+
+cax.set_label('Observation density')
+ax.set_title('Diamond prices')
+ax.set_xlabel('Carat')
+ax.set_ylabel('Price')
+```
+
+Although this hexbin plot is a great way of visualizing the distributions, it could be valuable to compare it to the histograms for each the plotted variable.
+
+```{python}
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
+fig.suptitle('Distribution plots', y=1.05)
+sns.despine()
+
+ax1.hist('carat', bins=30, data=diamonds) 
+ax1.set_title('Diamond weight')
+ax1.set_xlabel('Carat')
+
+ax2.hist('price', bins=30, data=diamonds) 
+ax2.set_title('Diamond price')
+ax2.set_xlabel('USD')
+
+fig.tight_layout()
+```
+
+Since visualizing two individual 1D distribution together with their joint 2D distribution is a common operation, `seaborn` has a built-in function to create a hexbin plot with histograms on the marginal axes.
+
+```{python}
+sns.jointplot(x='carat', y='price', data=diamonds, kind='hex')
+```
+
+This can be customized to appear more like the previous hexbin plots. Since `joinplot()` deals with both the hexbin and the histogram, the parameter names must be separated so that it is clear which plot they are referring to. This is done by passing them as dictionaries to the `joint_kws` and `marginal_kws` parameters ("kws" stands for "keywords").
+
+```{python}
+sns.jointplot(x='carat', y='price', data=diamonds, kind='hex', 
+              joint_kws={'cmap':'viridis', 'mincnt':1},
+              marginal_kws={'color': 'indigo'})
+```
+
+```{python}
+sns.jointplot(x='carat', y='price', data=diamonds, kind='kde', 
+              joint_kws={'cmap':'viridis', 'mincnt':1},
+              marginal_kws={'color': 'indigo'})
+```
+
+## Reshaping data between long and wide formats
+
+Data is often presented in a so-called wide format, e.g. with one column per measurement:
+
+|person|weight|height|age|
+|------|------|------|---|
+|A|70|170|32|
+|B|85|179|28|
+
+This can be a great way to display data so that it is easily interpretable by humans and is often used for summary statistics (commonly referred to as pivot tables). However, many data analysis functions in `pandas`, `seaborn` and other packages are optimized to work with the tidy data format. Tidy data is a long format where each row is a single observation and each column contains a single variable:
+
+|person|measure|value|
+|------|-----------|-----|
+|     A|     weight|   70|
+|     A|     height|  170|
+|     A|        age|   32|
+|     B|     weight|   85|
+|     B|     height|  179|
+|     B|        age|   28|
+
+`pandas` enables a wide range of manipulations of the structure of data, including alternating between the long and wide format. The survey data presented here is in a tidy format. To facilitate visual comparisons of the relationships between measurements across columns, it would be beneficial to display this data in the wide format. For example, what is the relationship between mean weights of different species caught at the same plot type?
+
+### Subset data
+
+To facilitate the visualization of the the transformations between wide and tidy data,  it is beneficial to create a subset of the data.
+
+```{python}
+world_data_2014 = world_data.loc[world_data['year'].isin(['2014'])]
+world_data_2014.head()
+```
+
+```{python}
+world_data_2014.info()
+```
+
+Let's look at the average CO2 emissions across reions and income_group.
+
+```{python}
+world_data_2014_co2avg = (
+    world_data_2014
+        .groupby(['region','income_group'])['co2_per_capita']
+        .mean()
+        .reset_index()
+)
+world_data_2014_co2avg
+```
+
+### Long to wide with `pivot()` and `pivot_table()`
+
+The data we created is a long or tidy format. A long to wide transformation would be suitable to effectively visualize the relationship between the average co2 emission of the countries based on their region and income. 
+
+
+To remove the repeating information for `region` and `income_group`, this table can be pivoted into a wide formatted using the `pivot()` method. The arguments passed to `pivot()` includes the rows (the index), the columns, and which values should populate the table. 
+
+```{python}
+world_data_2014_pvt = world_data_2014_co2avg.pivot(
+    index='region', columns='income_group', values='co2_per_capita')
+world_data_2014_pvt
+```
+
+Compare how this table is displayed with the table in the previous cell. It is certainly easier to spot differences between the species and plot types in this wide format.
+
+Since presenting summary statistics in a wide format is such a common operation, `pandas` has a dedicated method, `pivot_table()`, that performs both the data aggregation and pivoting.
+
+```{python}
+world_data_2014.pivot_table(
+    index='region', columns='income_group',
+    values='co2_per_capita', margins=True
+)
+```
+
+With `pivot_table()` it is also possible to change the aggregation function.
+
+```{python}
+world_data_2014.pivot_table(
+    index='region', columns='income_group', 
+    values='co2_per_capita', margins=True, aggfunc='median'
+)
+```
+
+Although `pivot_table()` is the most convenient way to aggregate *and* pivot data, `pivot()` is still useful to reshape a data frame from wide to long *without* performing aggregation.
+
+
+The columns and rows can be swapped in the call to `pivot_table()`. This is useful both to present the table differently and to perform computations on a different axis (dimension) of the data frame (this result can also be obtained by calling the `transpose()` method).
+
+```{python}
+world_data_2014.pivot_table(index='income_group', columns='region', values='co2_per_capita')
+```
+
+### Wide to long with `melt()`
+
+It is also a common operation to reshape data from the wide to the long format, e.g. when getting the data into the most suitable format for analysis. For this transformation, the `melt()` method can be used to sweep up a set of columns into one key-value pair.
+
+To prepare the data frame, the `plot_type` index name can be moved to a column name with the `reset_index()` method.
+
+```{python}
+world_data_2014_pvt
+```
+
+```{python}
+world_data_2014_res = world_data_2014_pvt.reset_index()
+world_data_2014_res
+```
+
+At a minimum, `melt()` only requires the name of the column that should be kept intact. All remaining columns will have their values in the `value` column and their name in the `variable` column (here, our columns already has a name "income_group", so this will be used automatically instead of "variable").
+
+```{python}
+world_data_2014_res.melt(id_vars='region')
+```
+
+To be more explicit, all the arguments to `melt()` can be specified. This way it is also possible to exclude some columns, e.g. the income group 'Lower middle'.
+
+```{python}
+world_data_2014_res.melt(id_vars='region', value_vars=['High','Low','Lower middle','Upper middle'], 
+                     var_name='income_group', value_name='co2_per_capita')
+```
+
+>#### Challenge 1
+>
+> 1. Subset the data to contain only the year 1950 and the region Southern Europe.
+> 2. Reset the index of this data frame and assign it to a new variable name
+> 3. Create a tidy data frame with country as the id column, and `pop_density` and `co2_per_capita` as values in the variable column.
+
+```{python}
+# Challenge solution
+# 1.
+world_data_1950_se = world_data.loc[world_data['year'].isin(['1950']) & world_data['sub_region'].isin(['Southern Europe'])]
+
+# 2.
+world_data_1950_se_res = world_data_1950_se.reset_index()[['country','pop_density','co2_per_capita']]
+
+# 3.
+world_data_1950_tidy = world_data_1950_se_res.melt(id_vars='country')
+# if we wanted to drop the NaN values in the previous format we had to index a 2D dataframe
+# but in a tidy data format it's easier to drop the NaN values:
+world_data_1950_tidy.dropna()
+```
+
+# Cleaning data (time permitting)
+
+`pandas` has many helpful methods for cleaning data, [an overview can be found in the documentation](https://pandas.pydata.org/pandas-docs/stable/missing_data.html). We will explore the most commonly used methods here. First, let's load a sample data frame with some dirty raw data that needs cleaning.
+
+```{python}
+raw_data = pd.read_csv('https://raw.githubusercontent.com/UofTCoders/2018-09-10-utoronto/gh-pages/data/raw_dirty_data.csv')
+clean_df = raw_data.copy() # To ensure the original df is not modified
+clean_df
+```
+
+A few rows in this data frame contain missing values. As mentioned earlier, there are several ways to handle missing values. A robust option is to remove any rows with missing values, which can be done wth the `dropna()` method of the data frame.
+
+```{python}
+clean_df.dropna()
+```
+
+By default all columns are considered. However, if the purpose is to study the population changes over time, it is not desirable to drop rows with valid population values just because they are missing a co2 measurement. `dropna()` can therefore be adjusted to only consider specific columns.
+
+```{python}
+clean_df.dropna(subset=['population'])
+```
+
+<!-- #region {"slideshow": {"slide_type": "-"}} -->
+A common alternative to removing rows containing `NA` values is to fill out the values with e.g. the mean of all observations or the previous non-NA value. This can be done with the `fillna()` method.
+<!-- #endregion -->
+
+```{python}
+# Fill missing values with mean value for that column
+raw_data.fillna(raw_data.mean())
+```
+
+In this case, it would have been better to calculate different values for the different countries.
+
+Another way of filling values is to copy the previous or next value. This is especially relevant in time series where the values are ordered chronologically.
+
+```{python}
+# Fill with previews non-null value
+raw_data.fillna(method='ffill')
+```
+
+For NA values that are surrounded by two measurements, the most appropriate method could be to interpolate the missing values. The default interpolation method is to linearly estimate the values, but there are many more options.
+
+```{python}
+clean_df.interpolate(limit_direction='both')
+```
+
+Whether to use `dropna()`, `fillna()`, or `interpolate()` depends on the data set and the purpose of the analysis.
+
+Data frames have plenty of built-in `str` [(string) methods](https://pandas.pydata.org/pandas-docs/stable/api.html#string-handling) and many of these are helpful when handling typos and text formatting. Say for examples that it is desired to have the values of the `income_group` column as lower case characters. 
+
+```{python}
+clean_df['income_group'].str.lower()
+```
+
+The space can easily be replaced with an underscore.
+
+```{python}
+clean_df['income_group'].str.lower().str.replace(' ', '-')
+```
+
+This can then be assigned back to the original data frame.
+
+```{python}
+clean_df['income_group'] = clean_df['income_group'].str.lower().str.replace(' ', '-')
+clean_df
+```
+
+Note that the NA values are still around because the original data frame was never overwritten with modified one without NA values.
+
+To find spelling mistakes the `unique()` method is useful.
+
+```{python}
+clean_df['country'].unique()
+```
+
+The `replace()` method can be used here again, this time replacing several spelling mistakes simultaneously.
+
+```{python}
+(clean_df['country']
+     .str.replace('samoa|Samia', 'Samoa')
+     .str.replace('Tonnga', 'Tonga')
+     .unique()
+)
+```
+
+The `|` bar means `or`, similar to how we saw it used previously with `loc[]`. Using a `|` in a string like this work because the `str.replace()` method supports "regular expressions". This is a powerful way of using strings as search patterns, such as with `|`, rather than interpreting the literally.
+
+A more powerful "regular expression" to replace everything starting with `S` or `s` with `Samoa` and every word starting with `T` with `Tongo` would look like this.
+
+```{python}
+(clean_df['country']
+     .str.replace('[S,s].*', 'Samoa') # .* means "any sequence of characters
+     .str.replace('T.*', 'Tonga')
+     .unique()
+)
+```
+
+Entire books have been written on regular expressions and covering them fully here is outside the scope of this tutorial, but it is very useful to know about `|` (and to a lesser extent `[]` and `.*`) when replacing misspelled words.
+
+
+Another common data cleaning operation is to split one column into two in order to have one measurement per column. This can be done via `str.split()`.
+
+```{python}
+clean_df['region'].str.split('.')
+```
+
+To assign the results to two different columns The returned object is a series where each row is a list of two values. This cannot be assigned to to different columns in the data frame, since there is only one column in the output. To get around this, we can append `str` to the output, which allows assigning the first item of each list to the first specified column and the second item to the second specified column.
+
+```{python}
+clean_df['region'], clean_df['sub_region'] = clean_df['region'].str.split('.').str
+clean_df
+# To get only one of the list items, use indexing
+# clean_df['region'], clean_df['sub_region'] = clean_df['region'].str.split('.').str[0]
+```
+
+To get rid of certain rows or columns, the `drop()` method can be used.
+
+```{python}
+clean_df.drop(index=[1, 4, 5], columns=['region', 'year', 'country'])
+```
+
+> # Challenge
+>
+> 1. Create a new data frame called `world_data_co2` from the `world_data` data that contains only the `country`, `year`, `population` and `co2_pet_capita` columns and no NA values.
+> 2. Create a new column in `clean_df_co2` called `total_co2` containing the total co2 emissions of the country using the per capita value in `co2_per_capita` and the `population` column.
+> 3. Retrieve all observations that have a `total_co2` value greater than 10,000,000.
+
+
+### More general resources on plotting
+
+- [Ten Simple Rules for Better Figures](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003833)
+- [Finding the Right Color Palettes for Data Visualizations](https://blog.graphiq.com/finding-the-right-color-palettes-for-data-visualizations-fcd4e707a283)
+- [Examples of bad graphs](https://www.biostat.wisc.edu/~kbroman/topten_worstgraphs/)
+- [More examples of bad graphs and how to improve them](https://www.stat.auckland.ac.nz/~ihaka/120/Lectures/lecture03.pdf)
+- [Wikipedia has a great article on misleading graphs](https://en.wikipedia.org/wiki/Misleading_graph)
+- [Usability article about how to design for people with color blindness](http://blog.usabilla.com/how-to-design-for-color-blindness/)

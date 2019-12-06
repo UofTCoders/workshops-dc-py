@@ -1,0 +1,672 @@
+---
+jupyter:
+  jupytext:
+    formats: ipynb,rmd//Rmd
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.1'
+      jupytext_version: 1.2.1
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+## Lesson preamble
+
+### Lesson objectives
+
+- To give students an overview of the capabilities of Python and how to use the
+  JupyterLab for exploratory data analyses.
+- Learn about some differences between Python and Excel.
+- Learn some basic Python commands.
+- Learn about the Markdown syntax and how to use it within the Jupyter Notebook.
+
+### Lesson outline
+
+- Communicating with computers (5 min)
+    - Advantages of text-based communication (10 min)
+    - Speaking Python (5 min)
+    - Natural and formal languages (10 min)
+- The Jupyter Notebook (20 min)
+- Data analysis in Python (5 min)
+    - Packages (5 min)
+    - How to get help (5 min)
+    - Exploring data with `pandas` (10 min)
+    - Visualizing data with `seaborn` (10 min)
+
+
+The aim of this workshop is to teach you basic concepts, skills, and tools for working with data so that you can get more done in less time, and while having more fun. We will show you how to use the programming language Python to replace many of the tasks you would normally do in spreadsheet software such as Excel, and also do more advanced analysis. This first section will be a brief introduction to communicating with your computer via text rather than by pointing and clicking in a graphical user interface, which might be what you are used to.
+
+## Communicating with computers
+
+Before we get into practically doing things, I want to give some background to the idea of computing. Essentially, computing is about humans communicating with the computer to modulate flows of current in the hardware, in order to get the computer to carry out advanced calculations that we are unable to efficiently compute ourselves. Early examples of human-computer communication was quite primitive and included actually disconnecting a wire and connecting it again in a different spot. Luckily, we are not doing this anymore, instead we have graphical user interfaces with menus and buttons, which is what you are commonly using on your laptop. These graphical interfaces can be thought of as a layer or shell around the internal components of your operating system and they exist as a middle man making it easier for us to express our thoughts, and for computers to interpret them.
+
+An example of such a program that I think many of you are familiar with is spreadsheet software such as Microsoft Excel and LibreOffice Calc. Here, all the functionality of the program is accessible via hierarchical menus, and clicking buttons sends instructions to the computer, which then responds and sends the results back to your screen.
+
+Spreadsheet software is great for viewing and entering small data sets and creating simple visualizations fast. However, it can be tricky to design publication-ready figures, create automatic reproducible analysis workflows, perform advanced calculations, and reliably clean data sets. Even when using a spreadsheet program to record data, it is often beneficial to have some some basic programming skills to facilitate the analyses of those data.
+
+
+### Advantages of text-based communication
+
+Today, we will learn about communicating to your computer via text, rather than graphical point and click. Typing instruction to the computer might at first seems counterintuitive, why do we need it when it is so easy to point and click with the mouse?  Well, graphical user interfaces can be nice when you are new to something, but text based interfaces are more powerful, faster and actually also easier to use once you get comfortable with them.
+
+We can compare it to learning a language, in the beginning it's nice to look things up in a dictionary (or a menu in a graphical program), and slowly string together sentences one word at a time. But once we become more proficient in the language and know what we want to say, it is easier to say or type it directly, instead of having to look up every word in the dictionary first. By extension, it would be even faster to speak or just think of what you want to do and have it executed by the computer, this is what speech- and brain-computer interfaces are concerned with.
+
+Text interfaces are also less resource intensive than their graphical counterparts and easier to develop programs for since you don't have to code the graphical components. Very important, is that it is easy to automate and repeat any task once you have all the instructions written down. This facilitates reproducibility of analysis, not only between studies from different labs, but also between researchers in the same lab: compare being shown how to perform a certain analysis in spreadsheet software, where the instruction will essentially be "first you click here, then here, then here...", with being handed the same workflow written down in several lines of codes which you can analyze and understand at your own pace. 
+
+Since text is the easiest way for people who are fluent in computer languages to interact with computer, many powerful programs are written without a graphical user interface (which makes it faster to create these programs) and to use these programs you often need to know how to use a text interface. For example, many the best data analysis and machine learning packages are written in Python or R, and you need to know these languages to use them. Even if the program or package you want to use is not written in Python, much of the knowledge you gain from understanding one programming language can be transferred to others. In addition, most powerful computers that you can log into remotely might only give you a text interface to work with and there is no way to launch a graphical user interface.
+
+
+### Speaking Python
+
+To communicate with the computer via Python, we first need to open the Python interpreter. This will *interpret* our typed commands into machine language so that the computer can understand it. On Windows open the `Anaconda Prompt`, on MacOS open `terminal.app`, and on Linux open whichever terminal you prefer (e.g. `gnome-terminal` or `konsole`). Then type in `python` and hit <kbd>Enter</kbd>. You should see something like this:
+
+```
+Python 3.6.5 | packaged by conda-forge | (default, Apr  6 2018, 13:39:56)
+[GCC 4.8.2 20140120 (Red Hat 4.8.2-15)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 
+```
+
+There should be a blinking cursor after the `>>>`, which is *prompting* you to enter a command (for this reason, the interpreter can also be referred to as a "prompt"). Now let's speak Python!
+
+### Natural and formal languages
+
+While English and other spoken language are referred to as "natural" languages, computer languages are said to be "formal" languages. You might think it is quite tricky to learn formal languages, but it is actually not! You already know one: mathematics, which in fact written largely the same way in Python as you would write it by hand. 
+
+```{python}
+4 + 5
+```
+
+The Python interpreter returns the result directly under our input and prompts us to enter new instructions. This is another strength of using Python for data analysis, some programming languages requires an additional step where the typed instructions are *compiled* into machine language and saved as a separate file that they computer can run. Although compiling code often results in faster execution time, Python allows us to very quickly experiment and test new code, which is where most of the time is spent when doing exploratory data analysis.
+
+The sparseness in the input `4 + 5` is much more efficient than typing "Hello computer, could you please add 4 and 5 for me?". Formal computer languages also avoid the ambiguity present in natural languages such as English. You can think of Python as a combination of math and a formal, succinct version of English. Since it is designed to reduce ambiguity, Python lacks the edge cases and special rules that can make English so difficult to learn, and there is almost always a logical reason for how the Python language is designed, not only a historical one.
+
+The syntax for assigning a value to a variable is also similar to how this is written in math.
+
+```{python}
+a = 4
+```
+
+```{python}
+a * 2
+```
+
+In my experience, learning programming really is similar to learning a foreign language - you will often learn the most from just trying to do something and receiving feedback (from the computer or another person)! When there is something you can't wrap you head around, or if you are actively trying to find a new way of expressing a thought, then look it up, just as you would with a natural language.
+
+
+## The Jupyter Notebook
+
+Although the Python interpreter is very powerful, it is commonly bundled with other useful tools in interfaces specifically designed for exploratory data analysis. One such interface is the Jupyter Notebook, which is what we will be using today. Open it by running `juptyerlab` from the terminal, or by finding it in the `Anaconda navigator` from your operating system menu. This should output some text in the terminal and open new tab in your default browser.
+
+Jupyter originates from a project called IPython, an effort to make Python development more interactive. Since its inception, the scope of the project expanded to include additional programming languages, such as Julia, Python, and R, so the name was changed to "Jupyter" as a reference to these core languages. Today, Jupyter supports many more languages, but we will be using it only for Python code. Specifically, we will be using the notebook from Jupyter, which allows us to easily take notes about our analysis and view plots within the same document where we code. This facilitates sharing and reproducibility of analyses, and the notebook interface is easily accessible through any web browser as well as exportable as a PDF or HTML page.
+
+In the new browser tab, click the plus sign to the left and select to create a new notebook in the Python language (also `File --> New --> Notebook`). A new notebook has no name other than "Untitled". If you click on "Untitled" you will be given the option of changing the name to whatever you want. The notebook is divided into cells. Initially there will be a single input cell. You can type Python code directly into the cell, just as we did before. To run the output, press <kbd>Shift</kbd> + <kbd>Enter</kbd> or click the play button in the toolbar.
+
+```{python}
+4 + 5
+```
+
+By default, the code in the current cell is interpreted and the next existing cell is selected or a new empty one is created (you can press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to stay on the current cell). You can split the code across several lines as needed. 
+
+```{python}
+a = 4
+a * 2
+```
+
+<!-- #region -->
+The little counter on the left of each cell keeps track of in which order the cells were executed, and changing to an `*` when the computer is processing the computation (only noticeable for computation that takes longer time). If the `*` is shown for a really long time, the Python kernel might have frozen and needs to be restarted, which can be done via the circular arrow button in the toolbar. Cells can be reordered by click and drag with the mouse, and copy and paste is available via right mouse click. The shortcut keys in the right click menu are referring to the Jupyter Command mode, which is not that important to know about when just starting out, but can be interesting to look into if you like keyboard shortcuts.
+
+The notebook is saved automatically, but it can also be done manually from the toolbar or by hitting <kbd>Ctrl</kbd> + <kbd>s</kbd>. Both the input and the output cells are saved so any plots that you make will be present in the notebook next time you open it up without the need to rerun any code. This allows you to create complete documents with both your code and the output of the code in a single place instead of spread across text files for your codes and separate image files for each of your graphs.
+
+You can also change the cell type from Python code to Markdown using the Cell | Cell Type option. Markdown is a simple formatting system which allows you to create documentation for your code, again all within the same notebook structure. You might already be familiar with markdown if you have typed comments in online forums or use use a chat app like slack or whatsapp. A short example of the syntax:
+
+```markdown
+# Heading level one
+
+- A bullet point
+- *Emphasis in italics*
+- **Strong emphasis in bold**
+
+This is a [link to learn more about markdown](https://guides.github.com/features/mastering-markdown/)
+```
+
+
+The Notebook itself is stored as a JSON file with an .ipynb extension. These are specially formatted text files, which can be exported and imported into another Jupyter system. This allows you to share your code, results, and documentation with others. You can also export the notebook to HTML, PDF, and many other formats to make sharing even easier! This is done via `File --> Export Notebook As...` (The first time trying to export to PDF, there might
+ be an error message with instructions on how to install TeX. Follow those instructions and the n try exporting again. If it is still not working, click `Help --> Launch Classic Notebook` and try exporting the same way as before)
+
+
+The data analysis environment provided by the Jupyter Notebook is very powerful and facilitates reproducible analysis. It is possible to write an entire paper in this environment, and it is very handy for reports, such as progress updates since you can share your comments on the analysis together with the analysis itself.
+
+It is also possible to open up other document types in the JupyterLab interface, e.g. text documents and terminals. These can be placed side by side with the notebook through drag and drop, and all running programs can be viewed in the "Running" tab to the left. To search among all available commands for the notebook, the "Commands" tab can be used. Existing documents can be opened from the "Files" tab.
+
+Although the notebook is running in a web browser, there is no need to have an active Internet connection to use it. After downloading and installing JupyterLab (e.g. via Anaconda), all the files necessary to run JupyterLab are stored locally and the browser is simply used to view these files.
+<!-- #endregion -->
+
+<!-- #region -->
+## Data analysis in Python
+
+To access additional functionality in a spreadsheet program, you need to click the menu and select the tool you want to use. All charts are in one menu, text layout tools in another, data analyses tools in a third, and so on. Programming languages such as Python have so many tools and functions so that they would not fit in a menu. Instead of clicking `File -> Open` and chose the file, you would type something similar to `file.open('<filename>')` in a programming language. Don't worry if you forget the exact expression, it is often enough to just type the few first letters and then hit <kbd>Tab</kbd>, to show the available options, more on that later.
+
+
+### Packages
+
+Since there are so many functions available in Python, it is unnecessary to include all of them with the default installation of the programming language (it would be as if your new phone came with every single app preinstalled). Instead, more advanced functionality is grouped into separate packages, which can be accessed by typing `import <package_name>` in Python. The Anaconda Python distribution essentially bundles the core Python language with many of the most effective Python packages for data analysis, but other packages need to be downloaded before they can be used, just like downloading an addon to a browser or mobile phone.
+
+Just like in spreadsheet software menus, there are lots of different tools within each Python package. For example, if I want to use numerical Python functions, I can import the **num**erical **py**thon module, `numpy`. I can then access any function by writing `numpy.<function_name>`.
+<!-- #endregion -->
+
+```{python}
+import numpy
+
+numpy.mean([1, 2, 3, 4, 5])
+```
+
+### How to get help
+
+Once you start out using Python, you don't know what functions are availble within each package. Luckily, in the Jupyter Notebook, you can type `numpy.`<kbd>Tab</kbd> (that is numpy + period + tab-key) and a small menu will pop up that shows you all the available functions in that module. This is analogous to clicking a 'numpy-menu' and then going through the list of functions. As I mentioned earlier, there are plenty of available functions and it can be helpful to filter the menu by typing the initial letters of the function name.
+
+To get more info on the function you want to use, you can type out the full name and then press <kbd>Shift + Tab</kbd> once to bring up a help dialogue and again to expand that dialogue. We can see that to use this function, we need to supply it with the argument `a`, which should be 'array-like'. An array is essentially just a sequence of numbers. We just saw that one way of doing this was to enclose numbers in brackets `[]`, which in Python means that these numbers are in a list, something you will hear more about later. Instead of manually activating the menu every time, the JupyterLab  offers a tool called the "Inspector" which displays help information automatically. I find this very useful and always have it open next to my Notebook. More help is available via the "Help" menu, which links to useful online resources (for example `Help --> Numpy Reference`).
+
+When you start getting familiar with typing function names, you will notice that this is often faster than looking for functions in menus. However, sometimes you forget and it is useful to get hints via the help system described above.
+
+It is common to give packages nicknames, so that it is faster to type. This is not necessary, but can save some work in long files and make code less verbose so that it is easier to read:
+
+```{python}
+import numpy as np
+
+np.mean([1, 2, 3, 4, 5])
+```
+
+### Exploring data with the `pandas` package 
+
+The Python package that is most commonly used to perform exploratory data analysis with spreadsheet-like data is called `pandas`. The name is derived from "panel data", an econometrics term for multidimensional structured data sets. Data are easily loaded into `pandas` from `.csv` or other spreadsheet formats. The format `pandas` uses to represent this data is called a data frame.
+
+For this section of the tutorial, the goal is to understand the concepts of data analysis in Python and how they are different from analyzing data frame,in graphical programs. There fore, it is recommend to not code along, but rather try to get a feel for the overall workflow. All these steps will be covered in detail during later sections in the tutorial.
+
+I do not have any good data set lying around, so I will load a public dataset from the web (you can view the data by pasting the url into your browser). This sample data set describes the length and width of sepals and petals for three species of iris flowers. When you open a file in a graphical spreadsheet program, it will immediately display the content in the window. Likewise, Python will display the information of the data set when you read it in. 
+
+```{python}
+import pandas as pd
+
+pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv')
+```
+
+However, to do useful and interesting things to data, we need to assign this value to a variable name so that it is easy to access later. Let's save our data into an object called `iris`
+
+```{python}
+iris = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv')
+```
+
+```{python}
+iris
+```
+
+The method `head()` can be used to display only the first few rows of the data frame.
+
+```{python}
+iris.head()
+```
+
+And a single column can be selected with the following syntax
+
+```{python}
+iris['sepal_length'].head()
+```
+
+We could calculate the mean of all columns easily.
+
+```{python}
+iris.mean()
+```
+
+And even divide it into groups depending on which species or iris flower the observations belong to.
+
+```{python}
+iris.groupby('species').mean()
+```
+
+This technique is often referred to as "split-apply-combine". The `groupby()` method *split* the observations into groups, `mean()` *applied* an operation to each group, and the results were automatically *combined* into the table that we can see here. We will learn much more about this in a later lecture.
+
+### Visualizing data with `seaborn`
+
+A crucial part of any exploratory data analysis is data visualization. Humans have great pattern recognition systems which makes it much easier for us to understand data when it is represented by graphical elements in plots rather than numbers in tables. Before creating any plots, we will set an option so that all the plots appear in the notebook, and not in a separate figure.
+
+```{python}
+# This is a jupyter magic command, which we will talk more about later.
+# %matplotlib inline
+```
+
+To visualize the results in with plots, we will use Python package dedicated to statistical visualization, `seaborn` (the name is a reference to a TV-show character). To count the observations in each species, we could use `countplot()`.
+
+```{python}
+import seaborn as sns
+
+sns.countplot(x='species', data=iris)
+```
+
+We can see that there are 50 observations recorded for each species of iris. More interesting could be to compare the sepal lengths between the plants to see if there are differences depending on species. We could use `swarmplot()` for this, which plots every single observation as a dot.
+
+```{python}
+sns.swarmplot(x='species', y='sepal_length', data=iris)
+```
+
+Since the number of observations for each species was 50, there will be 50 dots for each species here. This plot corresponds with what we saw when looking at the mean values for each species earlier.
+
+There is much more to learn about plotting, which will do in a later lecture. One last example to illustrate the power of programmatic data analysis and how straightforward it can be to create very complex visualizations. A common exploratory visualization is the investigate the pairwise relationship between variables, are there measurements that are correlated with each other? This can be done with the `pairplot()` function.
+
+```{python}
+sns.pairplot(data=iris)
+```
+
+This graph shows the histograms of the distribution of each variable on the diagonal. The same pairwise relationships between the columns in the data set are shown in scatter plots below and above the diagonal. It is easy to see that some variables certainly seem to depend on each other. For example, the petal width and petal height, increase simultaneously indicated that some flowers have bigger petals than others.
+
+We can also make out some clusters or groups of points within each pairwise scatter plot. It would be interesting to know if this corresponded to some inherent structure of the data frame. Maybe it is observations from the different species that cluster together? To find this out, we can instruct `seaborn` to adjust the color *hue* of the data points according to their species affiliation with a minor modification to the line of code above.
+
+```{python}
+sns.pairplot(data=iris, hue='species')
+```
+
+It certainly looks like observations from the same species are close together and a lot of the variation in our data can be explained with which species the observation belongs to!
+
+This has been an introduction to what data analysis looks like with Python in the Jupyter Notebook. We will get into details about all the steps of this workflow in the following lectures, and you can keep referring back to this lecture as a high level overview of the process.
+
+
+# Introduction to programming in Python
+
+## Lesson preamble
+
+### Learning objectives
+
+- Perform mathematical operations in Python using basic operators.
+- Define the following data types in Python: strings, integers, and floats.
+- Define the following as it relates to Python: lists, tuples, and dictionaries.
+
+### Lesson outline
+
+- Introduction to programming in Python (50 min)
+
+---
+
+
+### Operators
+
+Python can be used as a calculator and mathematical calculations use familiar operators such as `+`, `-`, `/`, and `*`.
+
+```{python}
+2 + 2 
+```
+
+```{python}
+6 * 7
+```
+
+```{python}
+4 / 3
+```
+
+Text prefaced with a `#` is called a "comment". These are notes to people reading the code, so they will be ignored by the Python interpreter.
+
+```{python}
+# `**` means "to the power of"
+2 ** 3
+```
+
+Values can be given a nickname, this is called assigning values to variables and is handy when the same value will be used multiple times. The assignment operator in Python is `=`.
+
+```{python}
+a = 5
+a * 2
+```
+
+A variable can be named almost anything. It is recommended to separate multiple words with underscores and start the variable name with a letter, not a number or symbol.
+
+```{python}
+new_variable = 4
+a - new_variable
+```
+
+Variables can hold different types of data, not just numbers. For example, a sequence of characters surrounded by single or double quotation marks (called a string). In Python, it is intuitive to append string by adding them together:
+
+```{python}
+# Either single or double quotes can be used to define a string
+b = 'Hello'
+c = "universe"
+b + c
+```
+
+A space can be added to separate the words.
+
+```{python}
+b + ' ' + c
+```
+
+To find out what type a variable is, the built-in function `type()` can be used. In essence, a function can be passed input values, follows a set of instructions with how to operate on the input, and then outputs the result. This is analogous to following a recipe: the ingredients are the input, the recipe specifies the set of instructions, and the output is the finished dish.
+
+```{python}
+type(a)
+```
+
+`int` stands for "integer", which is the type of any number without a decimal component.
+
+To be reminded of the value of `a`, the variable name can be typed into an empty code cell.
+
+```{python}
+a
+```
+
+A code cell will only output its last value. To see more than one value per code cell, the built-in function `print()` can be used. When using Python from an interface that is not interactive like the Jupyter Notebook, such as when executing a set of Python instructions together as a script, the function `print()` is often the preferred way of displaying output.
+
+```{python}
+print(a)
+type(a)
+```
+
+Numbers with a decimal component are referred to as floats
+
+```{python}
+type(3.14)
+```
+
+Text is of the type `str`, which stands for "string". Strings hold sequences of characters, which can be letters, numbers, punctuation or more exotic forms of text (even emoji!).
+
+```{python}
+print(type(b))
+b
+```
+
+The output from `type()` is formatted slightly differently when it is printed.
+
+
+Python also allows to use comparison and logic operators (`<`, `>`, `==`, `!=`, `<=`, `>=`, `and`, `or`, `not`), which will return either `True` or `False`.
+
+```{python}
+3 > 4
+```
+
+`not` reverses the outcome from a comparison.
+
+```{python}
+not 3 > 4
+```
+
+`and` checks if both comparisons are `True`.
+
+```{python}
+3 > 4 and 5 > 1
+```
+
+`or` checks if *at least* one of the comparisons are `True`.
+
+```{python}
+3 > 4 or 5 > 1
+```
+
+The type of the resulting `True` or `False` value is called "boolean".
+
+```{python}
+type(True)
+```
+
+Boolean comparison like these are important when extracting specific values from a larger set of values. This use case will be explored in detail later in this material.
+
+Another common use of boolean comparison is with conditional statement, where the code after the comparison only is executed if the comparison is `True`.
+
+```{python}
+if a == 4:
+    print('a is 4')
+else:
+    print('a is not 4')
+```
+
+```{python}
+a
+```
+
+Note that the second line in the example above is indented. Indentation is very important in Python, and  the Python interpreter uses it to understand that the code in the indented block will only be exectuted if the conditional statement above is `True`.
+
+> Challenge 1
+> 1. Assign `a*2` to the variable name `two_a`.
+> 2. Change the value of `a` to `3`. What is the value of `two_a` now, `6` or `10`?
+
+
+## Array-like Python types
+
+### Lists
+
+ **Lists** are a common data structure to hold an ordered sequence of elements. Each element can be accessed by an index.  Note that Python indexes start with 0 instead of 1.
+
+```{python}
+planets = ['Earth', 'Mars', 'Venus']
+planets[0]
+```
+
+You can index from the end of the list by prefixing with a minus sign
+
+
+Multiple elements can be selected via slicing.
+
+```{python}
+planets[0:2]
+```
+
+Slicing is inclusive of the start of the range and exclusive of the end, so `0:2` returns list elements `0` and `1`.
+
+Either the start or the end number of the range can be excluded to include all items to the beginning or end of the list, respectively.
+
+```{python}
+planets[:2]
+```
+
+To add items to the list, the addition operator can be used together with a list of the items to be added.
+
+```{python}
+planets = planets + ['Neptune']
+planets
+```
+
+A loop can be used to access the elements in a list or other Python data structure one at a time.
+
+```{python}
+for planet in planets:
+    print(planet)
+```
+
+The variable `planet` is recreated for every iteration in the loop until the list `planets` has been exhausted. 
+
+Operation can be performed on elements inside loops.
+
+```{python}
+for planet in planets:
+    print('I live on ' + planet)
+```
+
+### Tuples
+
+A tuple is similar to a list in that it's an ordered sequence of elements. However, tuples can not be changed once created (they are "immutable"). Tuples are created by separating values with a comma (and for clarity these are commonly surrounded by parentheses). 
+
+```{python}
+a_tuple = (1, 2, 3)
+another_tuple = ('blue', 'green', 'red')
+```
+
+> ## Challenge - Tuples
+> 1. Type `type(a_tuple)` into Python - what is the object type?
+> 2. What happens when you type `a_tuple[2] = 5` vs `planets[1] = 5` ?
+
+
+## Dictionaries
+
+A **dictionary** is a container that holds pairs of objects - keys and values.
+
+```{python}
+fruit_colors = {'banana': 'yellow', 'strawberry': 'red'}
+fruit_colors
+```
+
+Dictionaries work a lot like lists - except that they are indexed with *keys*. Think about a key as a unique identifier for a set of values in the dictionary. Keys can only have particular types - they have to be "hashable". Strings and numeric types are acceptable, but lists aren't.
+
+```{python}
+fruit_colors['banana']
+```
+
+To add an item to the dictionary, a value is assigned to a new dictionary key.
+
+```{python}
+fruit_colors['apple'] = 'green'
+fruit_colors
+```
+
+Using loops with dictionaries iterates over the keys by default.
+
+```{python}
+for fruit in fruit_colors:
+    print(fruit, fruit_colors[fruit])
+```
+
+Trying to use a non-existing key, e.g. from typo, throws an error message.
+
+```{python}
+fruit_colors['bannana']
+```
+
+This an error message is commonly referred to as a "traceback". This message pinpoints what line in the code cell resulted in an error when it was executed, by pointing at it with an arrow (`---->`). This is helpful in figuring out what went wrong, especially when many lines of code are executed simultaneously.
+
+
+> ## Challenge - Can you do reassignment in a dictionary?
+>
+> 1. In the `fruit_colors` dictionary, change the color of `apple` to `'red'`.
+> 2. Loop through the `fruit_colors` dictionary and print the key only **if** the value of that key points to in the dictionary is `'red'`.
+
+
+## Functions
+
+Defining a section of code as a function in Python is done using the `def`
+keyword. For example a function that takes two arguments and returns their sum
+can be defined as:
+
+```{python}
+def subtract_function(a, b):
+    result = a - b
+    return result
+```
+
+There is not output until we call the function.
+
+```{python}
+subtract_function(a=8, b=5)
+```
+
+a and b are called `parameters` and the values passed to the mare `arguments`. If the name of the parameters are not specied in the function calls, the arguments will be assumed to have been passed in the same order as the parameters are listed in the function definition.
+
+```{python}
+subtract_function(8, 5)
+```
+
+If the parameter names are specified, they can be in any order.
+
+```{python}
+subtract_function(b=8, a=5)
+```
+
+The result from a function can be assigned to a variable
+
+```{python}
+z = subtract_function(8, 5)
+z
+```
+
+A function can return more than one value.
+
+```{python}
+def subtract_function_2(a, b):
+    result = a - b
+    return result, 2 * result
+
+subtract_function_2(4, 1)
+```
+
+Which can be assigned to two variables.
+
+```{python}
+z, x = subtract_function_2(4, 1)
+```
+
+```{python}
+z
+```
+
+```{python}
+x
+```
+
+It is helpful to include a description of the function. There is a special syntax for this in Python that makes sure that the message shows up in the docstring of the help message.
+
+```{python}
+def subtract_function(a, b):
+    """This subtracts b from a"""
+    result = a - b
+    return result
+```
+
+Just previously, the `?` can be used to get help for the function.
+
+```{python}
+# ?subtract_function
+```
+
+The string between the `"""` is called the docstring and is shown in the help message, so it is important to write a clear description of the function here. It is possible to see the entire source code of the function by using double `?` (this can be quite complex for complicated functions).
+
+```{python}
+??subtract_function
+```
+
+Much of the power from languages such as Python and R comes from community contributed functions written by talented people and shared openly so that anyone can use them for their own research instead of reinventing the wheel. Related function can be bundled together in packages/modules, which often consists of a set of functions that are helpful to carry out a particular task.
+
+
+### Packages 
+
+Since there are so many esoteric tools and functions available in Python, it is unnecessary to include all of them with the basics that are loaded by default when you start the programming language (it would be as if your new phone came with every single app preinstalled). Instead, more advanced functionality is grouped into separate packages, which can be accessed by typing `import <package_name>` in Python. You can think of this as that you are telling the program which menu items you want to use (similar to how Excel hides the Developer menu by default since most people rarely use it and you need activate it in the settings if you want to access its functionality). Some packages needs to be downloaded before they can be used, just like downloading an addon to a browser or mobile phone. The Anaconda distribution of Python essentially bundles the core Python language with many of the most effective Python packages for data analysis.
+
+Just like in spreadsheet software menus, there are lots of different tools within each Python package. For example, if I want to use numerical Python functions, I can import the **num**erical **py**thon module, [`numpy`](http://www.numpy.org/). I can then access any function by writing `numpy.<function_name>`. It is common to give packages nicknames, so that it is faster to type. This is not necessary, but can save some work in long files and make code less verbose so that it is easier to read.
+
+```{python}
+import numpy as np
+
+np.mean([1, 2, 3, 4, 5])
+```
+
+To get more info on the function you want to use, you can type out the full name and then press Shift + Tab once to bring up a help dialogue and again to expand that dialogue. We can see that to use this function, we need to supply it with the argument a, which should be 'array-like'. An array is essentially just a sequence of numbers. We just saw that one way of doing this was to enclose numbers in brackets [], which in Python means that these numbers are in a list, something you will hear more about later. Instead of manually activating the menu every time, the JupyterLab offers a tool called the "Inspector" which displays help information automatically. I find this very useful and always have it open next to my Notebook. More help is available via the "Help" menu, which links to useful online resources (for example Help --> Numpy Reference).
+
+
+#### Installing new packages
+
+To download and install new packages, the Python package manager `conda` can be used either from the command line or via the `Anaconda navigator` interface. For example, to install the package `natsort` (for extended sorting options for list items), do the following [from the `Anaconda navigator`](https://docs.anaconda.com/anaconda/navigator/tutorials/manage-packages) interface:
+
+1. Go to the `Environments` tab on the left
+2. Select all packages via the dropdown menu
+3. Search for `natsort`
+4. Check the box next to the name
+5. Hit apply
+
+These operations can also be done via the `Anaconda prompt` / `terminal`. To search for a package
+
+```
+anaconda search -t conda natsort
+```
+
+The package is available in the base `anaconda` channel and can be installed by issuing the following commmand.
+
+```
+conda install natsort
+```
+
+Packages not in the default channel(s), need to be installed by specifying the channel with the `-c` parameter.
+
+```
+conda install -c conda-forge natsort
+```
+
+Package updates can also be managed from the `Anaconda navigator` or via the command line (`conda update --all`). Once a package is installed, it is saved on the computer and does not need to be downloaded again.
