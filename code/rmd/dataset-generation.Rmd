@@ -1,0 +1,250 @@
+---
+jupyter:
+  jupytext:
+    formats: ipynb,rmd//Rmd
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.1'
+      jupytext_version: 1.2.1
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+```{python}
+import pandas as pd
+```
+
+```{python}
+# df = pd.read_clipboard()
+# df['country'] = df['Country'].str.split('[').str[0]
+# df[['country', 'Surrounding countries', 'Count']].to_csv('../data/landlocked-countries.csv', index=False)
+landlocked_countries = pd.read_csv('../data/landlocked-countries.csv', comment='#')
+landlocked_countries.head()
+```
+
+```{python}
+population = pd.read_csv('../data/population_total.csv')
+pop_melt = population.melt(id_vars='geo', var_name='year', value_name='population')
+pop_melt['year'] = pop_melt['year'].astype(int)
+pop_melt = pop_melt.rename(columns={'geo': 'country'})
+# pop_melt = pop_melt.loc[pop_melt['year'] > 1899] # maybe no need to include the 1800s
+pop_melt.head()
+```
+
+```{python}
+# children born per woman
+children_born = pd.read_csv('../data/children_per_woman_total_fertility.csv')
+children_born_melt = children_born.melt(id_vars='geo', var_name='year', value_name='children_per_woman')
+children_born_melt['year'] = children_born_melt['year'].astype(int)
+children_born_melt = children_born_melt.rename(columns={'geo': 'country'})
+# children_born_melt = children_born_melt.loc[children_born_melt['year'] > 1899] # maybe no need to include the 1800s
+children_born_melt.head()
+```
+
+```{python}
+# child mortality = 0-5 years olds deaths per 1000 newborns
+child_mort = pd.read_csv('../data/child_mortality_0_5_year_olds_dying_per_1000_born.csv')
+child_mort_melt = child_mort.melt(id_vars='geo', var_name='year', value_name='child_mortality')
+child_mort_melt['year'] = child_mort_melt['year'].astype(int)
+child_mort_melt = child_mort_melt.rename(columns={'geo': 'country'})
+# child_mort_melt = child_mort_melt.loc[child_mort_melt['year'] > 1899] # maybe no need to include the 1800s
+child_mort_melt.head()
+```
+
+```{python}
+# CO2 emissions (tonne per person?)
+co2 = pd.read_csv('../data/co2_emissions_tonnes_per_person.csv')
+co2_melt = co2.melt(id_vars='geo', var_name='year', value_name='co2_emissions')
+co2_melt['year'] = co2_melt['year'].astype(int)
+co2_melt = co2_melt.rename(columns={'geo': 'country'})
+# co2_melt = co2_melt.loc[co2_melt['year'] > 1899] # maybe no need to include the 1800s
+co2_melt.head()
+```
+
+```{python}
+# Pop density
+pop_dens = pd.read_csv('../data/population_density_per_square_km.csv')
+pop_dens_melt = pop_dens.melt(id_vars='geo', var_name='year', value_name='pop_density')
+pop_dens_melt['year'] = pop_dens_melt['year'].astype(int)
+pop_dens_melt = pop_dens_melt.rename(columns={'geo': 'country'})
+# pop_dens_melt = pop_dens_melt.loc[pop_dens_melt['year'] > 1899] # maybe no need to include the 1800s
+pop_dens_melt.head()
+```
+
+```{python}
+# Life expectancy
+life_exp = pd.read_csv('../data/life_expectancy_years.csv')
+life_exp_melt = life_exp.melt(id_vars='geo', var_name='year', value_name='life_expectancy')
+life_exp_melt['year'] = life_exp_melt['year'].astype(int)
+life_exp_melt = life_exp_melt.rename(columns={'geo': 'country'})
+
+life_exp_melt.head()
+```
+
+```{python}
+# Income PPP
+income = pd.read_csv('../data/income_per_person_gdppercapita_ppp_inflation_adjusted.csv')
+income_melt = income.melt(id_vars='geo', var_name='year', value_name='income')
+income_melt['year'] = income_melt['year'].astype(int)
+income_melt = income_melt.rename(columns={'geo': 'country'})
+
+income_melt.head()
+```
+
+```{python}
+# Education men
+education_men = pd.read_csv('../data/mean_years_in_school_men_25_to_34_years.csv')
+education_men_melt = education_men.melt(id_vars='geo', var_name='year', value_name='education_men')
+education_men_melt['year'] = education_men_melt['year'].astype(int)
+education_men_melt = education_men_melt.rename(columns={'geo': 'country'})
+
+education_men_melt.head()
+```
+
+```{python}
+# Education women
+education_women = pd.read_csv('../data/mean_years_in_school_women_25_to_34_years.csv')
+education_women_melt = education_women.melt(id_vars='geo', var_name='year', value_name='education_women')
+education_women_melt['year'] = education_women_melt['year'].astype(int)
+education_women_melt = education_women_melt.rename(columns={'geo': 'country'})
+
+education_women_melt.head()
+```
+
+```{python}
+# Education percent women/men
+education_women_men = pd.read_csv('../data/mean_years_in_school_women_percent_men_25_to_34_years.csv')
+education_women_men_melt = education_women_men.melt(id_vars='geo', var_name='year', value_name='education_women_men')
+education_women_men_melt['year'] = education_women_men_melt['year'].astype(int)
+education_women_men_melt = education_women_men_melt.rename(columns={'geo': 'country'})
+
+education_women_men_melt
+```
+
+```{python}
+# Check that the manual calculation lines up with the precalculted one
+my_ratio = (100 * education_women_melt['education_women'] / education_men_melt['education_men']).round(1)
+bool_idx = (my_ratio == education_women_men_melt['education_women_men'])
+df = pd.DataFrame({'edu_cntry':education_women_melt['country'], 'my_rtio': my_ratio,
+             'country': education_women_men_melt['country'], 'ratio': education_women_men_melt['education_women_men']})
+print(df.query('my_rtio != ratio').shape)
+max(abs(df['my_rtio'] - df['ratio']))
+# print(df.query('abs(my_rtio - ratio) > 2').shape)
+```
+
+There are almost 3000 rows where they are not teh same, but the differences is never bigger than 1.3 % so should be fine if students calculate this themselves instead of using the precalculated one.
+
+```{python}
+# Income groups world bank 2018
+# temp_df['Income group'] = temp_df['Income group'].str.rpartition()[0]
+# temp_df.drop('X', axis=1).to_csv('../data/income-group.csv', index=False)
+income_group = pd.read_csv('../data/income-group.csv')
+income_group = income_group.rename(columns={'Economy': 'country', 'Income group': 'income_group'})
+income_group.head()
+```
+
+```{python}
+country_regions = pd.read_csv('../data/countries-regions.csv')
+country_regions = country_regions.rename(columns={'name': 'country'})
+country_regions.head()
+```
+
+Fix country names to be the same from different sources... yawn...
+
+```{python}
+landlocked_countries['country'].shape
+```
+
+```{python}
+country_regions['country'].shape
+```
+
+```{python}
+income_group['country'].shape
+```
+
+```{python}
+pop_melt['country'].unique().shape
+```
+
+## Normalize names of the population regions data frame to the melted data frames
+
+```{python}
+pop_melt.loc[pop_melt['year'] == 2018, ['country', 'population']].loc[~pop_melt['country'].isin(country_regions['country'])]
+```
+
+```{python}
+# country_regions.loc[country_regions['country'] == 'Bahamas', 'country'] = 'Bahamas, The'
+country_regions.loc[country_regions['country'].str.startswith('Bolivia'), 'country'] = 'Bolivia'
+country_regions.loc[country_regions['country'].str.startswith('Congo (Dem'), 'country'] = 'Congo, Dem. Rep.'
+country_regions.loc[country_regions['country'] == 'Congo', 'country'] = 'Congo, Rep.'
+country_regions.loc[country_regions['country'].str.startswith('Czhechia'), 'country'] = 'Czech Republic'
+country_regions.loc[country_regions['country'].str.startswith('Czechia'), 'country'] = 'Czech Republic'
+country_regions.loc[country_regions['country'].str.startswith('Iran'), 'country'] = 'Iran'
+country_regions.loc[country_regions['country'].str.startswith('Kyrgyzstan'), 'country'] = 'Kyrgyz Republic'
+country_regions.loc[country_regions['country'].str.startswith('Korea (Rep'), 'country'] = 'South Korea'
+country_regions.loc[country_regions['country'].str.startswith('Korea (Dem'), 'country'] = 'North Korea'
+country_regions.loc[country_regions['country'].str.startswith('Macedonia'), 'country'] = 'Macedonia, FYR'
+country_regions.loc[country_regions['country'].str.startswith('Moldova'), 'country'] = 'Moldova'
+country_regions.loc[country_regions['country'].str.startswith('Slovakia'), 'country'] = 'Slovak Republic'
+country_regions.loc[country_regions['country'].str.startswith('Russian'), 'country'] = 'Russia'
+country_regions.loc[country_regions['country'].str.startswith('Palestine'), 'country'] = 'Palestine'
+country_regions.loc[country_regions['country'].str.startswith('Syria'), 'country'] = 'Syria'
+country_regions.loc[country_regions['country'].str.startswith('United Kingdom'), 'country'] = 'United Kingdom'
+country_regions.loc[country_regions['country'].str.startswith('United States'), 'country'] = 'United States'
+country_regions.loc[country_regions['country'].str.startswith('Venezuela'), 'country'] = 'Venezuela'
+country_regions.loc[country_regions['country'].str.startswith('Viet Nam'), 'country'] = 'Vietnam'
+country_regions.loc[country_regions['country'].str.startswith('Tanzania'), 'country'] = 'Tanzania'
+country_regions.loc[country_regions['country'].str.startswith('Lao'), 'country'] = 'Lao'
+country_regions.loc[country_regions['country'].str.startswith('Côte '), 'country'] = "Cote d'Ivoire"
+country_regions.loc[country_regions['country'].str.startswith('Eswatini'), 'country'] = 'Swaziland'
+```
+
+```{python}
+country_regions.loc[~country_regions['country'].isin(pop_melt['country'])]
+```
+
+## Normalize names of the income_group data frame to the melted data frames
+
+```{python}
+pop_melt.loc[pop_melt['year'] == 2018, ['country', 'population']].loc[~pop_melt['country'].isin(income_group['country'])]
+```
+
+```{python}
+income_group.loc[income_group['country'].str.startswith('Bahamas'), 'country'] = 'Bahamas'
+income_group.loc[income_group['country'].str.startswith('Côte'), 'country'] = "Cote d'Ivoire"
+income_group.loc[income_group['country'].str.startswith('Egypt'), 'country'] = 'Egypt'
+income_group.loc[income_group['country'].str.startswith('Gambia'), 'country'] = 'Gambia'
+income_group.loc[income_group['country'].str.startswith('Iran'), 'country'] = 'Iran'
+income_group.loc[income_group['country'].str.startswith('Korea, Dem'), 'country'] = 'North Korea'
+income_group.loc[income_group['country'].str.startswith('Korea, Rep'), 'country'] = 'South Korea'
+income_group.loc[income_group['country'].str.startswith('Lao'), 'country'] = 'Lao'
+income_group.loc[income_group['country'].str.startswith('Russia'), 'country'] = 'Russia'
+income_group.loc[income_group['country'].str.startswith('Syria'), 'country'] = 'Syria'
+income_group.loc[income_group['country'].str.startswith('Venezuela'), 'country'] = 'Venezuela'
+income_group.loc[income_group['country'].str.startswith('Yemen'), 'country'] = 'Yemen'
+income_group.loc[income_group['country'].str.startswith('West Bank'), 'country'] = 'Palestine'
+```
+
+## Merge data frames
+
+```{python}
+world_data = pd.merge(pop_melt, country_regions[['country', 'region', 'sub-region']], on='country')
+world_data = pd.merge(world_data, income_group[['country', 'income_group']], on=['country'])
+world_data = pd.merge(world_data, life_exp_melt, on=['country', 'year'])
+world_data = pd.merge(world_data, income_melt, on=['country', 'year'])
+world_data = pd.merge(world_data, children_born_melt, on=['country', 'year'])
+world_data = pd.merge(world_data, child_mort_melt, on=['country', 'year'])
+world_data = pd.merge(world_data, pop_dens_melt, on=['country', 'year'], how='left')
+world_data = pd.merge(world_data, co2_melt, on=['country', 'year'], how='left')
+world_data = pd.merge(world_data, education_men_melt, on=['country', 'year'], how='left')
+world_data = pd.merge(world_data, education_women_melt, on=['country', 'year'], how='left')
+world_data.info()
+```
+
+```{python}
+world_data.to_csv('../data/world-data-gapminder.csv', index=False)
+```
