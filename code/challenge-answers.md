@@ -43,19 +43,17 @@
 
     ```
     1.
-    surveys_hh = surveys.dropna()[['species_id', 'hindfoot_length']]
+    surveys_hh = surveys[['species_id', 'hindfoot_length']].dropna()
+    2.
     surveys_hh['hindfoot_half'] = surveys_hh['hindfoot_length'] / 2 
     surveys_hh = surveys_hh.loc[surveys_hh['hindfoot_half'] < 30]
+    3.
+    surveys_hh.shape == (31436, 3)
     ```
 5. Groupby
 
     ```
     1. surveys.grouby('species')['hindfoot_length'].agg(['mean', 'min', 'max'])
-    ```
-
-    ```
-    2. max_weight_indices = surveys.groupby("year")['weight'].idxmax()
-       surveys[['year', 'genus', 'species', 'weight']].iloc[max_weight_indices]
     ```
 
 6. Size
@@ -127,27 +125,11 @@ topics.
 
     ```
     1.
-    # a. One method chain
-    genus_year_wide = (surveys.groupby(['year', 'plot_id'])['genus']
-         .nunique()
-         .reset_index()
-         .pivot_table(index='plot_id', columns='year')
-    )
-    genus_year_wide
-
-    # b. Intermediate variables
-    genera_per_plot = surveys.groupby(['plot_id', 'year'])['genus'].nunique().reset_index()
-    genera_per_plot = genera_per_plot.pivot_table(index='plot_id', columns='year')
-    genera_per_plot.head()
-
-    # If someone asks about the hierarchical column names
-    # This also remove the genus None column for task 2 in this challenge
-    genus_year_wide.columns = genus_year_wide.columns.get_level_values(1)
-    genus_year_wide = genus_year_wide.reset_index()
+    
+    species_year_wide = surveys.pivot_table(index='plot_type', columns='year', values='species', aggfunc='nunique')
 
     2.
-    genera_per_plot.melt(id_vars='plot_id').head()
-
+    species_year_long = species_year_wide.reset_index().melt(id_vars='plot_type')
     ```
 
 2. Ask them to share which color they chose! Show how to search online for "matplolib markers" which should take them to this page https://matplotlib.org/api/markers_api.html listing all possible markers.
@@ -160,11 +142,12 @@ topics.
     ax1.set_title('Scatter plot')
     ax2.set_title('Line plot')
     fig.tight_layout()
+
     ```
 
 3. Discussion.
 
-    - Boxplot shows a few statistics of the distribution (medain, quartiles, whiskers).
+    - Boxplot shows a few distribution statistics (medain, quartiles, whiskers).
     - Violin plot approximates the distribution with a smoothened histogram, which can be more informative for big data set, but misleading for small datasets. 
     - Swarmplot shows every observations which is great for small to medium data set, but becomes clusttered on large data sets.
     - Combinations of these plots can bring the best of both worlds as we will see soon!
@@ -188,6 +171,5 @@ topics.
     ax.set_xlabel('')
     sns.despine()
     ```
-
 
 5. Save one of the previous figures and upload it on that website, or ask the students to share one of their own.
