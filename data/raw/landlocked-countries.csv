@@ -1,0 +1,50 @@
+# https://en.wikipedia.org/wiki/Landlocked_country#List_of_landlocked_countries_and_territories
+country,surrounding countries,count
+Afghanistan,"Iran, Turkmenistan, Uzbekistan, Tajikistan, China, Pakistan",6
+Andorra,"France, Spain",2
+Armenia,"Iran, Turkey, Georgia, Azerbaijan",4
+Austria,"Germany, Czech Republic, Slovakia, Hungary, Slovenia, Italy, Liechtenstein, Switzerland",8
+Azerbaijan,"Russia, Georgia, Armenia, Iran, Turkey",4
+Belarus,"Poland, Lithuania, Russia, Ukraine, Latvia",5
+Bhutan,"India, China",2
+Bolivia,"Peru, Brazil, Chile, Argentina, Paraguay",5
+Botswana,"Namibia, Zambia, Zimbabwe, South Africa",4
+Burkina Faso,"Mali, Niger, Benin, Togo, Ghana, Ivory Coast",6
+Burundi,"Rwanda, Tanzania, Democratic Republic of the Congo",3
+Central African Republic,"Chad, Cameroon, Congo, Democratic Republic of the Congo, Sudan, South Sudan",6
+Chad,"Libya, Niger, Sudan, Central African Republic, Nigeria, Cameroon",6
+Czech Republic,"Austria, Germany, Poland, Slovakia",4
+Ethiopia,"Djibouti, Eritrea, Kenya, Somalia, South Sudan, Sudan",6
+Hungary,"Austria, Croatia, Romania, Serbia, Slovakia, Slovenia, Ukraine",7
+Kazakhstan,"China, Kyrgyzstan, Russia, Turkmenistan, Uzbekistan",5
+Kosovo,"Albania, Macedonia, Montenegro, Serbia",4
+Kyrgyzstan,"China, Kazakhstan, Tajikistan, Uzbekistan",4
+Laos,"Myanmar, China, Vietnam, Cambodia, Thailand",5
+Lesotho,South Africa,1
+Liechtenstein,"Switzerland, Austria",2
+Luxembourg,"Belgium, Germany, France",3
+Macedonia,"Kosovo, Serbia, Bulgaria, Greece, Albania",5
+Malawi,"Zambia, Tanzania, Mozambique",3
+Mali,"Algeria, Niger, Burkina Faso, Ivory Coast, Guinea, Senegal, Mauritania",7
+Moldova,"Romania, Ukraine",2
+Mongolia,"China, Russia",2
+Nepal,"China, India",2
+Niger,"Libya, Chad, Nigeria, Benin, Burkina Faso, Mali, Algeria",7
+Paraguay,"Argentina, Brazil, Bolivia",3
+Rwanda,"Uganda, Tanzania, Burundi, Democratic Republic of the Congo",4
+San Marino,Italy,1
+Serbia,"Hungary, Romania, Bulgaria, Macedonia, Croatia, Bosnia and Herzegovina, Montenegro, Albania (via Kosovo and Metohija[c])",8
+Slovakia,"Austria, Czech Republic, Poland, Ukraine, Hungary",5
+South Ossetia,"Georgia, Russia",2
+South Sudan,"Sudan, Ethiopia, Kenya, Uganda, Democratic Republic of the Congo, Central African Republic",6
+Swaziland,"Mozambique, South Africa",2
+Switzerland,"France, Germany, Liechtenstein, Austria, Italy",5
+Tajikistan,"Afghanistan, Uzbekistan, Kyrgyzstan, China",4
+Transnistria,"Moldova, Ukraine",2
+Turkmenistan,"Kazakhstan, Uzbekistan, Afghanistan, Iran",4
+Uganda,"Kenya, South Sudan, Democratic Republic of the Congo, Rwanda, Tanzania",5
+Uzbekistan,"Kazakhstan, Tajikistan, Kyrgyzstan, Afghanistan, Turkmenistan",5
+Vatican City,Italy,1
+West Bank,"Israel, Jordan",2
+Zambia,"Democratic Republic of the Congo, Tanzania, Malawi, Mozambique, Zimbabwe, Botswana, Namibia, Angola",8
+Zimbabwe,"South Africa, Botswana, Zambia, Mozambique",4
