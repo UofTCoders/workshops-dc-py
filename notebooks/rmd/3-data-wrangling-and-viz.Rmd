@@ -204,6 +204,7 @@ fig.tight_layout()
 Figures can be saved by calling the `savefig()` method and specifying the name of file to create. The resolution of the figure can be controlled by the `dpi` parameter.
 
 ```{python}
+# Show that this file has been saved in the current directory with the jupyterlab file browser
 fig.savefig('scatter-and-line.png', dpi=300)
 ```
 
@@ -246,7 +247,7 @@ ax.scatter(x='year', y='population', data=world_pop)
 
 This plot shows how the world population has been steadingly increasing since the 1800s and dramatically picked up pace in the 1950s.
 
-It is possible to use `matplotlib` in this way to explore visual relationships in data frame. However, it gets complicated once we want to include more variable, e.g. stratifying the data in subplots based on region and income level in the example above would include writing double loops and keeping track of plot layout and grouping variables manually.
+It is possible to use `matplotlib` in this way to explore visual relationships in data frame. However, it it a little cumbersome already with these simple examples and it will get more complicated once we want to include more variables, e.g. stratifying the data in subplots based on region and income level in the example above would include writing double loops and keeping track of plot layout and grouping variables manually.
 
 
 ## Visual data exploration with `seaborn`
@@ -285,7 +286,7 @@ sns.lineplot(x='year', y='population', data=world_data, estimator='sum', ci=None
 
 ## Changing graph aesthetics
 
-Before continuing the exploration of the world populatino data, let's discuss how to customize the appearance of our plots. The returned object is an matplotlib axes, so all configuration available through `matplotlib` can be applied to the returned object by first assigning it to a variable name (`ax` by convention).
+Before continuing the exploration of the world population data, let's discuss how to customize the appearance of our plots. The returned object is an matplotlib axes, so all configuration available through `matplotlib` can be applied to the returned object by first assigning it to a variable name (`ax` by convention).
 
 ```{python}
 ax = sns.lineplot(x='year', y='population', data=world_data, estimator='sum', ci=None)
@@ -436,24 +437,23 @@ world_data.loc[world_data['year'] == 2018].nlargest(8, 'population')
 > Challenge 3
 >
 > 1. To find out the total amount of CO2 released into the atmosphere, used the `co2_per_capita` and `population` columns to create a new column: `co2_total`.
-> 2. Plot the total CO2 for the world and for each region.
-> 3. Create a facetted plot comparing total CO2 levels across income groups and regions.
+> 2. Plot the total CO2 per year for the world.
+> 3. Plot the total CO2 per year for the world and for each region.
+> 4. Create a facetted plot comparing total CO2 levels across income groups and regions.
 
 ```{python}
-world_data = world_data.rename(columns={'co2_per_capita': 'co2_per_capita'})
-```
-
-```{python}
-# Challenge 1
+# Challenge 3 solutions
 
 # 1.
 world_data['co2_total'] = world_data['co2_per_capita'] * world_data['population']
 
 # 2.
 sns.relplot(x='year', y='co2_total', data=world_data, kind='line', ci=None, estimator='sum')
-sns.relplot(x='year', y='co2_total', data=world_data, kind='line', ci=None, estimator='sum', hue='region')
 
 # 3.
+sns.relplot(x='year', y='co2_total', data=world_data, kind='line', ci=None, estimator='sum', hue='region')
+
+# 4.
 sns.relplot(x='year', y='co2_total', data=world_data, kind='line', ci=None, estimator='sum',
             hue='income_group', col='region', col_wrap=3, height=4)
 
@@ -511,7 +511,7 @@ sns.relplot(x='co2_total', y='co2_per_capita', hue='income_group', size='populat
 Already here we can get a pretty good idea of which some of these countries are. The high emission middle income countries in Asia are likely China and India, while the American country high in both total emissions and emissions per capita must be the USA. However, there are some curious dots, like which the high co2_capita regions are in Asia and the Americas.
 
 
-> #### Challenge
+> #### Challenge 4
 >
 > Let's use some of the aggregation methods from yesterday to complement the plots we have just made.
 >
@@ -520,16 +520,14 @@ Already here we can get a pretty good idea of which some of these countries are.
 > 3. Which 10 countries have produce the most CO2 in total since the 1800s?
 
 ```{python}
+# Challenge 4 solutions
+
 # 1.
 world_data_2014.nlargest(10, 'co2_per_capita')
-```
 
-```{python}
 # 2.
-world_data_2014.nlargest(10, 'co2_per_capita')
-```
+world_data_2014.nlargest(10, 'co2_total')
 
-```{python}
 # 3.
 world_data.groupby('country')['co2_total'].sum().nlargest(10)
 ```
@@ -720,6 +718,8 @@ africa = world_data_1920_2018.loc[world_data_1920_2018['region'] == 'Africa']
 sns.catplot(x='life_expectancy', y='year', orient='horizontal', data=africa, kind='violin',
             hue='sub_region', palette='pastel', split=True)
 ```
+
+For the last challenge, we will explore how an education indicator between and men and women varies.
 
 ```{python}
 world_data.dropna(subset=['years_in_school_women'])['year'].agg(['min', 'max'])

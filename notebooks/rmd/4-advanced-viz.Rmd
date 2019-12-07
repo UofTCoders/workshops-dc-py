@@ -226,7 +226,9 @@ Summary plots (especially bar plots) were previously mentioned to potentially be
 When plotting a data frame, `matplotlib` plotting functions can be made aware of the structure of the data by specifying the `data` parameter and the `x` and `y` parameters can then be specified just by passing the name of a column in the data frame as a string.
 
 ```{python}
-diamonds = pd.read_csv('https://vincentarelbundock.github.io/Rdatasets/csv/ggplot2/diamonds.csv', index_col=0)
+diamonds = pd.read_csv(
+    'https://vincentarelbundock.github.io/Rdatasets/csv/ggplot2/diamonds.csv',
+    index_col=0)
 diamonds.head()
 ```
 
@@ -474,10 +476,10 @@ world_data_2014_res.melt(id_vars='region', value_vars=['High','Low','Lower middl
 world_data_1950_se = world_data.loc[world_data['year'].isin(['1950']) & world_data['sub_region'].isin(['Southern Europe'])]
 
 # 2.
-world_data_1950_se_res = world_data_1950_se.reset_index()[['country','pop_density','co2_per_capita']]
+world_data_1950_se_res = world_data_1950_se.reset_index()
 
 # 3.
-world_data_1950_tidy = world_data_1950_se_res.melt(id_vars='country')
+world_data_1950_tidy = world_data_1950_se_res[['country','pop_density','co2_per_capita']].melt(id_vars='country')
 # if we wanted to drop the NaN values in the previous format we had to index a 2D dataframe
 # but in a tidy data format it's easier to drop the NaN values:
 world_data_1950_tidy.dropna()
