@@ -19,10 +19,10 @@ jupyter:
 
 ### Learning objectives
 
-- Describe what a data frame is.
-- Load external data from a .csv file into a data frame with pandas.
-- Summarize the contents of a data frame with pandas.
-- Learn to use data frame attributes `loc[]`, `head()`, `info()`, `describe()`, `shape`, `columns`, `index`.
+- Describe what a dataframe is.
+- Load external data from a .csv file into a dataframe with pandas.
+- Summarize the contents of a dataframe with pandas.
+- Learn to use dataframe attributes `loc[]`, `head()`, `info()`, `describe()`, `shape`, `columns`, `index`.
 - Learn to clean dirty data.
 - Understand the split-apply-combine concept for data analysis.
     - Use `groupby()`, `mean()`, `agg()` and `size()` to apply this technique.
@@ -31,7 +31,7 @@ jupyter:
 
 - Manipulating and analyzing data with pandas
     - Data set background (10 min)
-    - What are data frames (15 min)
+    - What are dataframes (15 min)
     - Data wrangling with pandas (40 min)
 - Cleaning data (20 min)
 - Split-apply-combine techniques in `pandas`
@@ -44,83 +44,168 @@ jupyter:
 
 ### Dataset background
 
-Today, we will be working with real data about the world combined from multiple sources by the [Gapminder foundation](https://www.gapminder.org/about-gapminder/). Gapminder is and independent Swedish foundation that fights devastating misconceptions about global development and promotes as fact-based world view through the production of free teaching and data exploration resources. Insights from the combined Gapminder data sources have been popularized through the efforts of public health professor Hans Rosling, and it is highly recommended to check out his entertaining videos, for example this one.
+Today,
+we will be working with real data about the world
+combined from multiple sources by the [Gapminder foundation].
+Gapminder is an independent Swedish organization
+that fights devastating misconceptions about global development.
+They also promote a fact-based world view
+through the production of free teaching and data exploration resources.
+Insights from the Gapminder data sources
+have been popularized through the efforts of public health professor Hans Rosling.
+It is highly recommended to check out his [entertaining videos],
+most famously [The best stats you have ever seen].
+Before we start exploring the data,
+we recommend taking [this 5-10 min quiz],
+to see how knowledgeable (or ignorant) you are about the world.
+Then we will learn how to dive deeper into this data using Python!
 
-As a start, we recommend taking [this 5-10 min quiz](http://forms.gapminder.org/s3/test-2018) to see how ignorant you are about the world. Then we will learn how to dive into this data further using Python!
+[Gapminder foundation]: https://www.gapminder.org/about-gapminder/
+[entertaining videos]: https://www.gapminder.org/videos/
+[The best stats you have ever seen]: https://www.youtube.com/watch?v=hVimVzgtD6w
+[this 5-10 min quiz]: http://forms.gapminder.org/s3/test-2018
 
-
-#### Overview of the gapminder world data
+#### Overview of the Gapminder world data
 
 We are studying the species and weight of animals caught in plots in our study
 area. The dataset is stored as a comma separated value (CSV) file. Each row
 holds information for a single animal, and the columns represent:
 
-| Column                | Description                        |
-|-----------------------|------------------------------------|
-| country               | Country name                       |
-| year                  | Year of observation                |
-| population            | Population in the country at each year |
-| region                | Continent the country belongs to   |
-| sub_region            | Sub regions as defined by          |
-| income_group          | Income group [as specified by the world bank](https://datahelpdesk.worldbank.org/knowledgebase/articles/378833-how-are-the-income-group-thresholds-determined)                  |
+| Column                | Description                                                                                            |
+|-----------------------|--------------------------------------------------------------------------------------------------------|
+| country               | Country name                                                                                           |
+| year                  | Year of observation                                                                                    |
+| population            | Population in the country at each year                                                                 |
+| region                | Continent the country belongs to                                                                       |
+| sub_region            | Sub regions as defined by                                                                              |
+| income_group          | Income group [as specified by the world bank]                                                          |
 | life_expectancy       | The average number of years a newborn child would <br>live if mortality patterns were to stay the same |
-| income                | GDP per capita (in USD) adjusted <br>for differences in purchasing power|
-| children_per_woman    | Number of children born to each woman|
-| child_mortality       | Deaths of children under 5 years <break>of age per 1000 live births|
-| pop_density           | Average number of people per km<sup>2</sup>|
-| co2_per_capita        | CO2 emissions from fossil fuels (tonnes per capita)|
-| years_in_school_men   | Average number of years attending primary, secondary,<br>and tertiary school for 25-36 years old men|
-| years_in_school_women | Average number of years attending primary, secondary,<br>and tertiary school for 25-36 years old women|
+| income                | GDP per capita (in USD) adjusted <br>for differences in purchasing power                               |
+| children_per_woman    | Number of children born to each woman                                                                  |
+| child_mortality       | Deaths of children under 5 years <break>of age per 1000 live births                                    |
+| pop_density           | Average number of people per km<sup>2</sup>                                                            |
+| co2_per_capita        | CO2 emissions from fossil fuels (tonnes per capita)                                                    |
+| years_in_school_men   | Average number of years attending primary, secondary,<br>and tertiary school for 25-36 years old men   |
+| years_in_school_women | Average number of years attending primary, secondary,<br>and tertiary school for 25-36 years old women |
 
+[as specified by the world bank]: https://datahelpdesk.worldbank.org/knowledgebase/articles/378833-how-are-the-income-group-thresholds-determined
 
-To read the data into Python, we are going to use a function called `read_csv` from the Python-package [`pandas`](https://pandas.pydata.org/). As mentioned previously, Python-packages are a bit like browser extensions, they are not essential, but can provide nifty functionality. To use a package, it first needs to be imported.
+To read the data into Python,
+we are going to use a function called `read_csv` from the Python-package [pandas].
+As mentioned previously,
+Python-packages are a bit like phone apps,
+they are not essential to the core Python library,
+but provides domain specific functionality.
+To use a package,
+it first needs to be imported.
+
+[pandas]: https://pandas.pydata.org/
 
 ```{python}
 # pandas is given the nickname `pd`
 import pandas as pd
 ```
 
-`pandas` can read CSV-files saved on the computer or directly from an URL.
+pandas can read CSV-files saved on the computer or directly from an URL.
+Here,
+we read data that we have compiled from Gapminder
+and uploaded to our GitHub repository.
 
 ```{python}
-world_data = pd.read_csv('https://raw.githubusercontent.com/UofTCoders/2018-09-10-utoronto/gh-pages/data/world-data-gapminder.csv')
+url = 'https://raw.githubusercontent.com/UofTCoders/2018-09-10-utoronto/go-pages/data/world-data-Gapminder.csv'
+world_data = pd.read_csv(url)
 ```
 
-To view the result, type `world_data` in a cell and run it, just as when viewing the content of any variable in Python.
+To view the dataframe that pandas created,
+type `world_data` in a cell and run it,
+just as when viewing the content of any variable in Python.
 
 ```{python}
 world_data
 ```
 
-This is how a data frame is displayed in the JupyterLab Notebook. Although the data frame itself just consists of the values, the Notebook knows that this is a data frame and displays it in a nice tabular format (by adding HTML decorators), and adds some cosmetic conveniences such as the bold font type for the column and row names, the alternating grey and white zebra stripes for the rows and highlights the row the mouse pointer moves over. The increasing numbers on the far left is the data frame's index, which was added by `pandas` to easily distinguish between the rows.
+This is how a dataframe is displayed in the Jupyter notebook.
+The Jupyter notebook displays pandas dataframes in a tabular format,
+and adds cosmetic conveniences such as the bold font type for the column and row names,
+the alternating grey and white zebra stripes for the rows,
+and highlighting of the row the mouse pointer hovers over.
+The increasing numbers on the far left is the dataframe's index or row names.
+These are not present in CSV-file,
+but were added by `pandas` to easily distinguish between the rows.
 
-## What are data frames?
+## What are dataframes?
 
-A data frame is the representation of data in a tabular format, similar to how data is often arranged in spreadsheets. The data is rectangular, meaning that all rows have the same amount of columns and all columns have the same amount of rows. Data frames are the *de facto* data structure for most tabular data, and what we use for statistics and plotting. A data frame can be created by hand, but most commonly they are generated by an input function, such as `read_csv()`. In other words, when importing spreadsheets from your hard drive (or the web).
+A dataframe is the representation of data in a tabular format,
+similar to how data is often arranged in spreadsheets.
+The data is rectangular,
+meaning that all rows have the same amount of columns
+and all columns have the same amount of rows.
+As mentioned in the previous lectures,
+when our data is arranged in a tidy format,
+the columns can be referred to as the "features" or "variables" of the data,
+while each row represents an individual "observation".
+Dataframes are the standard data structure for most tabular data,
+and what we will use for data wrangling, statistics and plotting.
+A dataframe can be created by hand,
+but most commonly they are generated by an input function,
+such as `read_csv()`,
+when importing spreadsheet data from your hard drive (or the web).
 
-As can be seen above, the default is to display the first and last 30 rows and truncate everything in between, as indicated by the ellipsis (`...`). Although it is truncated, this output is still quite space consuming. To glance at how the data frame looks, it is sufficient to display only the top (the first 5 lines) using the `head()` method.
+As can be seen above,
+the default is to display the first and last five rows
+and truncate everything in between,
+as indicated by the ellipsis (`...`).
+If we wanted to display only the first 5 lines,
+we could use the `head()` method.
 
 ```{python}
 world_data.head()
 ```
 
-Methods are very similar to functions, the main difference is that they belong to an object (above, the method `head()` belongs to the data frame `world_data`). Methods operate on the object they belong to, that's why we can call the method with an empty parenthesis without any arguments. Compare this with the function `type()` that was introduced previously.
+Methods are very similar to functions,
+the main difference is that they belong to an object
+(the method `head()` belongs to the dataframe `world_data`).
+Methods operate on the object they belong to,
+that's why we can call the method with an empty parenthesis without any arguments.
+Compare this with the function `type()` that was introduced previously.
 
 ```{python}
 type(world_data)
 ```
 
-Here, the `world_data` variable is explicitly passed as an argument to `type()`. An immediately tangible advantage with methods is that they simplify tab completion. Just type the name of the dataframe, a period, and then hit tab to see all the relevant methods for that data frame instead of fumbling around with all the available functions in Python (there's quite a few!) and figuring out which ones operate on data frames and which do not. Methods also facilitates readability when chaining many operations together, which will be shown in detail later.
+Here,
+the `world_data` variable is explicitly passed as an argument to `type()`.
+An immediately tangible advantage with methods is that they simplify tab completion.
+Just type the name of the dataframe,
+a period,
+and then hit tab to see all the relevant methods for that dataframe
+instead of fumbling around with all the available functions in Python
+(there's quite a few!)
+and figuring out which ones operate on dataframes and which do not.
+Methods also facilitates readability when chaining many operations together,
+which will be shown in detail later.
 
-The columns in a data frame can contain data of different types, e.g. integers, floats, and objects (which includes strings, lists, dictionaries, and more)). General information about the data frame (including the column data types) can be obtained with the `info()` method.
+The columns in a dataframe can contain data of different types,
+e.g. integers, floats, and objects (which includes strings, lists, dictionaries, and more)).
+General information about the dataframe
+(including the column data types)
+can be obtained with the `info()` method.
 
 ```{python}
 world_data.info()
 ```
 
-The information includes the total number of rows and columns, the number of non-null observations, the column data types, and the memory (RAM) usage. The number of non-null observation is not the same for all columns, which means that some columns contain null (or NA) values representing that there is missing information. The column data type is often indicative of which type of data is stored in that column, and approximately corresponds to the following
+The information includes the total number of rows and columns,
+the number of non-null observations,
+the column data types,
+and the memory (RAM) usage.
+The number of non-null observation is not the same for all columns,
+which means that some columns contain null (or NA) values
+indicating that there is missing data for some observations.
+The column data type indicates which type of data is stored in that column,
+and approximately corresponds to the following
 
-- **Qualitative/Categorical**
+- **Categorical/Qualitative**
     - Nominal (labels, e.g. 'red', 'green', 'blue')
         - `object`, `category`
     - Ordinal (labels with order, e.g. 'Jan', 'Feb', 'Mar')
@@ -132,33 +217,62 @@ The information includes the total number of rows and columns, the number of non
         - `int`
     - Continuous (measured values with decimals, e.g. weight)
         - `float`
-    
-Note that an `object` could contain different types, e.g. `str` or `list`. Also note that there can be exceptions to the schema above, but it is still a useful rough guide.
 
-After reading in the data into a data frame, `head()` and `info()` are two of the most useful methods to get an idea of the structure of this data frame. There are many additional methods that can facilitate the understanding of what a data frame contains:
+Note that an `object` could contain different types,
+e.g. `str` or `list`.
+Also note that there can be exceptions to the schema above,
+but it is a useful general guide.
 
-
-- Size:
-    - `world_data.shape` - a tuple with the number of rows in the first element
-      and the number of columns as the second element
-    - `world_data.shape[0]` - the number of rows
-    - `world_data.shape[1]`- the number of columns
+After reading in the data into a dataframe,
+`head()` and `info()` are two of the most useful methods
+to get an idea of the structure of this dataframe.
+There are a few additional methods
+that can facilitate the understanding of what a dataframe contains:
 
 - Content:
-    - `world_data.head()` - shows the first 5 rows
-    - `world_data.tail()` - shows the last 5 rows
-
-- Names:
-    - `world_data.columns` - returns the names of the columns (also called variable names) 
-      objects)
-    - `world_data.index` - returns the names of the rows (referred to as the index in pandas)
+    - `world_data.head(n)` - shows the first `n` rows
+    - `world_data.tail(n)` - shows the last `n` rows
 
 - Summary:
     - `world_data.info()` - column names and data types, number of observations, memory consumptions
-      length, and content of  each column
+      length, and content of each column
     - `world_data.describe()` - summary statistics for each column
 
-These belong to a data frame and are commonly referred to as *attributes* of the data frame. All attributes are accessed with the dot-syntax (`.`), which returns the attribute's value. If the attribute is a method, parentheses can be appended to the name to carry out the method's operation on the data frame. Attributes that are not methods often hold a value that has been precomputed because it is commonly accessed and it saves time store the value in an attribute instead of recomputing it every time it is needed. For example, every time `pandas` creates a data frame, the number of rows and columns is computed and stored in the `shape` attribute.
+The suffixed parentheses indicate that the method is being called,
+which means that there is a computation carried out
+when we execute the code.
+Parameters can be put inside this parentheses
+to change the behavior of the method.
+For example,
+`head(10)` tells the `head()` method to show the first ten rows of the dataframe,
+instead of the default first five.
+
+In addition to methods that compute values on demand,
+dataframes can also have pre-calculated values stored with the same dot-syntax.
+Values stored like this are often frequently accessed
+and it saves time store the value directly instead of recomputing it every time it is needed.
+For example,
+every time `pandas` creates a dataframe,
+the number of rows and columns is computed and stored in the `shape` attribute.
+Some useful pre-computed values are shown below.
+
+- Names:
+    - `world_data.columns` - the names of the columns
+      objects)
+    - `world_data.index` - the names of the rows (referred to as the index in pandas)
+
+- Size:
+    - `world_data.shape` - the number of rows and columns stored as a tuple
+    - `world_data.shape[0]` - the number of rows
+    - `world_data.shape[1]`- the number of columns
+
+In `shape[0]`,
+the `[0]` part accesses the first element of the tuple via indexing
+and it is not the same as passing a number to `head()`,
+which changes how a calculation happens.
+Generally,
+anything accessible via the dot-syntax,
+is an *attribute* of the dataframe (including methods).
 
 >#### Challenge
 >
@@ -169,46 +283,65 @@ These belong to a data frame and are commonly referred to as *attributes* of the
 >* Why is there not the same number of rows (observations) for each column?
 
 
-### Saving data frames locally
+### Saving dataframes locally
 
-It is good practice to keep a copy of the data stored locally on your computer in case you want to do offline analyses,  the online version of the file changes, or the file is taken down. For this, the data could be downloaded manually or the current `world_data` data frame could be saved to disk as a CSV-file with `to_csv()`.
+When using data from an online source,
+it is good practice to keep a copy stored locally on your computer
+in case you want to do offline analyses,
+the online version of the file changes,
+or the file is taken down.
+To save a local copy,
+the data could be downloaded manually
+or the current `world_data` dataframe could be saved to disk as a CSV-file with `to_csv()`.
 
 ```{python}
 world_data.to_csv('world-data.csv', index=False)
-# `index=False` because the index (the row names) was generated automatically when pandas opened
-# the file and this information is not needed to be saved
+# `index=False` because the index (the numbered row names)
+# was generated automatically when pandas loaded the file
+# and this information is not needed to be saved
 ```
 
-Since the data is now saved locally, the next time this Notebook is opened, it could be loaded from the local path instead of downloading it from the URL.
+Since the data is now saved locally,
+the next time this notebook is opened,
+it could be loaded from the local path instead of downloading it from the URL.
 
 ```{python}
 world_data = pd.read_csv('world-data.csv')
 world_data.head()
 ```
 
-### Indexing and subsetting data frames
+### Indexing and subsetting dataframes
 
-The world data data frame has rows and columns (it has 2 dimensions). To extract specific data from it (also referred to as "subsetting"), columns can be selected by their name.The JupyterLab Notebook (technically, the underlying IPython interpreter) knows about the columns in the data frame, so tab autocompletion can be used to get the correct column name. 
+The world data dataframe has rows and columns,
+which means it has two dimensions.
+We can "subset" the dataframe 
+and extract data only from a single column
+by using its name inside brackets.
+pandas recognizes the column names in the dataframe,
+so tab autocompletion can be used when typing out the column name.
 
 ```{python}
 world_data['year'].head()
 ```
 
-The name of the column is not shown, since there is only one. Remember that the numbers on the left is just the index of the data frame, which was added by `pandas` upon importing the data.
-
-Another syntax that is often used to specify column names is `.<column_name>`.
-
-```{python}
-world_data.year.head()
-```
-
-Using brackets is clearer and also allows for passing multiple columns as a list, so this tutorial will stick to that.
+The name of the column and its data type is shown at the bottom.
+Remember that the numbers on the left is the index of the dataframe,
+which was added by `pandas` upon importing the data.
+You could also select a column with the dot-syntax `world_data.year`,
+but using brackets is clearer so this tutorial will stick to that.
+To selected multiple columns,
+the columns names can be passed as a list inside the brackets
+(so there will be double brackets,
+one for the dataframe indexing and one for the list).
 
 ```{python}
 world_data[['country', 'year']].head()
 ```
 
-The output is displayed a bit differently this time. The reason is that when there was only one column `pandas` technically returned a `Series`, not a `Dataframe`. This can be confirmed by using `type` as previously.
+The output is displayed a bit differently this time.
+The reason is that when there was only one column `pandas` technically returned a `Series`,
+not a `Dataframe`.
+This can be confirmed by using `type` as previously.
 
 ```{python}
 type(world_data['year'])
@@ -218,18 +351,30 @@ type(world_data['year'])
 type(world_data[['country', 'year']])
 ```
 
-So, every individual column is actually a `Series` and together they constitute a `Dataframe`. There can be performance benefits to work with `Series`, but `pandas` often takes care of conversions between these two object types under the hood, so this introductory tutorial will not make any further distinction between a `Series` and a `Dataframe`. Many of the analysis techniques used here will apply to both series and data frames.
+Every column in a dataframe is a `Series`
+and pandas glues them together to form a `Dataframe`.
+There can be performance benefits to work with `Series`,
+but pandas often takes care of conversions between these two object types under the hood,
+so this introductory tutorial will not make any further distinction between a `Series` and a `Dataframe`.
+Many of the analysis techniques used here will apply to both series and dataframes.
 
-
-Selecting with single brackets (`[]`) as above is a shortcut to common operations, such as selecting columns by labels as above. For more flexible and robust row and column selection the more verbose `loc[<rows>, <columns>]` (location) syntax is used.
+Selecting with single brackets (`[]`) is a shortcut for common operations,
+such as selecting columns by labels as above.
+For more flexible and robust row and column selection,
+the more verbose `loc[<rows>, <columns>]` syntax can be used
+(`.loc` stand for "location").
 
 ```{python}
 world_data.loc[[0, 2, 4], ['country', 'year']]
-# Although methods usually have trailing parenthesis, square brackets are used with `loc[]` to stay
-# consistent with the indexing with square brackets in general in Python (e.g. lists and Numpy arrays)
+# Although methods usually have trailing parenthesis,
+# square brackets are used with `loc[]` to stay
+# consistent with the indexing with square brackets in general in Python
+# (e.g. lists and Numpy arrays)
 ```
 
-A single number can be selected, which returns that value (here, an integer) rather than a `Dataframe` or `Series` with one value.
+A single number can be selected,
+which returns that value (an integer in this case),
+rather than a `Dataframe` or `Series` with one value.
 
 ```{python}
 world_data.loc[4, 'year']
@@ -239,19 +384,23 @@ world_data.loc[4, 'year']
 type(world_data.loc[4, 'year'])
 ```
 
-To select all rows, but only a subset of columns, the colon character (`:`) can be used.
+To select all rows,
+but only a subset of columns,
+the colon character (`:`) can be used.
 
 ```{python}
 world_data.loc[:, ['country', 'year']].head() # head() is used to limit the length of the output
 ```
 
-The same syntax can be used to select all columns but only a subset of rows.
+The same syntax can be used to select all columns,
+but only a subset of rows.
 
 ```{python}
 world_data.loc[[3, 4], :]
 ```
 
-When selecting all columns, the `:` could also be left out as a convenience.
+When selecting all columns,
+the `:` could be left out as a convenience.
 
 ```{python}
 world_data.loc[[3, 4]]
@@ -263,21 +412,30 @@ It is also possible to select slices of rows and column labels.
 world_data.loc[2:4, 'country':'region']
 ```
 
-It is important to realize that `loc[]` selects rows and columns by their *labels*. To instead select by row or column *position*, use `iloc[]` (integer location).
+It is important to realize that `loc[]` selects rows and columns by their *labels*.
+To instead select by row or column *position*,
+use `iloc[]` (integer location).
 
 ```{python}
 world_data.iloc[[2, 3, 4], [0, 1, 2]]
 ```
 
-The index of `world_data` consists of consecutive integers so in this case selecting from the index by labels or position will look the same. As will be shown later, an index could also consist of text names just like the columns.
+The index of `world_data` consists of consecutive integers,
+so in this case selecting from the index by labels or position will return the same rows.
+As will be shown later,
+an index could also consist of text names,
+just like the columns.
 
-While selecting slices by label is inclusive of both the start and end, selecting slices by position is inclusive of the start but exclusive of the end position, just like when slicing in lists.
+While selecting slices by label is inclusive of both the start and end,
+selecting slices by position is inclusive of the start but exclusive of the end position,
+just like when slicing in lists.
 
 ```{python}
 world_data.iloc[2:5, :4] # `iloc[2:5]` gives the same result as `loc[2:4]` above
 ```
 
-Selecting slices of row positions is a common operation, and has thus been given a shortcut syntax with single brackets.
+Selecting slices of row positions is a common operation,
+and has thus been given a shortcut syntax with single brackets.
 
 ```{python}
 world_data[2:5]
@@ -285,60 +443,92 @@ world_data[2:5]
 
 >#### Challenge
 >
->1. Extract the 200th and 201st row of the `world_data` dataset and assign the resulting data frame to a new variable name (`world_data_200_201`). Remember that Python indexing starts at 0!
+>1. Extract the 200th and 201st row of the `world_data` dataset
+>   and assign the resulting dataframe to a new variable name (`world_data_200_201`).
+>   Remember that Python indexing starts at 0!
 >
->2. How can you get the same result as from `world_data.head()` by using row slices instead of the `head()` method?
+>2. How can you get the same result as from `world_data.head()`
+>   by using row slices instead of the `head()` method?
 >
->3. There are at least three distinct ways to extract the last row of the data frame. Which can you find?
+>3. There are at least three distinct ways to extract the last row of the dataframe.
+>   Which can you find?
 
-
-The `describe()` method was mentioned above as a way of retrieving summary statistics of a data frame. Together with `info()` and `head()` this is often a good place to start exploratory data analysis as it gives a nice overview of the numeric valuables the data set.
+The `describe()` method was mentioned above
+as a way of retrieving summary statistics of a dataframe.
+Together with `info()` and `head()`,
+this is often a good place to start exploratory data analysis
+as it gives a helpful overview of the numeric valuables the data set.
 
 ```{python}
 world_data.describe()
 ```
 
-A common next step would be to plot the data to explore relationships between different variables, but before getting into plotting, it is beneficial to elaborate on the data frame object and several of its common operations.
+A common next step would be to plot the data to explore relationships between different variables,
+but before getting into plotting in the next lecture,
+we will elaborate on the dataframe object and several of its common operations.
 
-An often desired operation is to select a subset of rows matching a criteria, e.g. which observations have a life expectancy above 83 years. To do this, the "less than" comparison operator that was introduced previously can be used.
+An often desired operation is to select a subset of rows matching a criteria,
+e.g. which observations have a life expectancy above 83 years.
+To do this,
+the "less than" comparison operator that was introduced previously can be used
+to filter the relevant rows.
 
 ```{python}
 world_data['life_expectancy'] > 83
 ```
 
-The result is a boolean array with one value for every row in the data frame indicating whether it is `True` or `False` that this row has a value above 83 in the column `life_expectancy`. To find out how many observations there are matching this condition, the `sum()` method can used since each `True` will be `1` and each `False` will be `0`.
+The result is a boolean array with one value for every row in the dataframe
+indicating whether it is `True` or `False`
+that this row has a value above 83 in the column `life_expectancy`.
+To find out how many observations there are matching this condition,
+the `sum()` method can used
+since each `True` will be `1` and each `False` will be `0`.
 
 ```{python}
 above_83_bool = world_data['life_expectancy'] > 83
 above_83_bool.sum()
 ```
 
-Instead of assigning to an intermediate variable, it is possible to use methods directly on the resulting boolean series by surrounding it with parentheses.
+Instead of assigning to the intermediate variable `above_83_bool`,
+we can use methods directly on the resulting boolean series
+by surrounding it with parentheses.
 
 ```{python}
 (world_data['life_expectancy'] > 83).sum()
 ```
 
-The boolean array can be used to select only those rows from the data frame that meet the specified condition.
+The boolean array can be used to select only those rows from the dataframe
+that meet the specified condition.
 
 ```{python}
 world_data[world_data['life_expectancy'] > 83]
 ```
 
-As before, this can be combined with selection of a particular set of columns.
+As before,
+this can be combined with selection of a particular set of columns.
 
 ```{python}
 world_data.loc[world_data['life_expectancy'] > 83, ['country', 'year', 'life_expectancy']]
 ```
 
-A single expression can also be used to filter for several criteria, either matching *all* criteria (`&`) or *any* criteria (`|`). These special operators are used instead of `and` and `or` to make sure that the comparison occurs for each row in the data frame. Parentheses are added to indicate the priority of the comparisons.
+A single expression can be used to filter for several criteria,
+either matching *all* criteria with the `&` operator,
+or *any* criteria with the `|`.
+These special operators are used instead of `and` and `or`
+to make sure that the comparison occurs for each row in the dataframe.
+Parentheses are added to indicate the priority of the comparisons.
 
 ```{python}
-# AND = &
 world_data.loc[(world_data['sub_region'] == 'Northern Europe') & (world_data['year'] == 1879), ['sub_region', 'country', 'year']]
 ```
 
-To increase readability, these statements can be put on multiple rows. Anything that is within a parameter or bracket in Python can be continued on the next row. When inside a bracket or parenthesis, the indentation is not significant to the Python interpreter, but it is still recommended to include it in order to make the code more readable.
+To increase readability,
+long statements can be put on multiple rows.
+Anything that is within parentheses or brackets can be continued on the next row.
+When inside a bracket or parenthesis,
+the indentation is not significant to the Python interpreter,
+but it is recommended to align code in meaningful ways,
+to make it more readable.
 
 ```{python}
 world_data.loc[(world_data['sub_region'] == 'Northern Europe') &
@@ -346,7 +536,10 @@ world_data.loc[(world_data['sub_region'] == 'Northern Europe') &
                ['sub_region', 'country', 'year']]
 ```
 
-Above it was assumed that `'Northern Europe'` was a vaue within the `sub_region` column. When it is not known which values are available in a column, the `unique()` method can be used to find this out.
+Above,
+we assumed that `'Northern Europe'` was a value within the `sub_region` column.
+When we don't know which values exist in a column,
+the `unique()` method can reveal them.
 
 ```{python}
 world_data['sub_region'].unique()
@@ -355,15 +548,18 @@ world_data['sub_region'].unique()
 With the `|` operator, rows matching either of the supplied criteria are returned.
 
 ```{python}
-# OR = |
 world_data.loc[(world_data['year'] == 1800) |
-            (world_data['year'] == 1801) ,
-            ['country', 'year']].head()
+               (world_data['year'] == 1801) ,
+               ['country', 'year']].head()
 ```
 
-Additional useful ways of subsetting the data includes `between()` which checks if a numerical valule is within a given range, and `isin()` which checks if a value is contained in a given list.
+Additional useful ways of subsetting the data includes `between()`,
+which checks if a numerical value is within a given range,
+and `isin()`,
+which checks if a value is contained in a given list.
 
 ```{python}
+# `unique` is used to show that only the relevant items are returned
 world_data.loc[world_data['year'].between(2000, 2015), 'year'].unique()
 ```
 
@@ -373,7 +569,11 @@ world_data.loc[world_data['region'].isin(['Africa', 'Asia', 'Americas']), 'regio
 
 ### Creating new columns
 
-A frequent operation when working with data, is to create new columns based on the values in existing columns, for example to do unit conversions or find the ratio of values in two columns. To create a new column of the weight in kg instead of in grams:
+A frequent operation when working with data,
+is to create new columns based on the values in existing columns.
+For example,
+to find the total income in a country,
+we could multiple the income per person with the population:
 
 ```{python}
 world_data['population_income'] = world_data['income'] * world_data['population']
@@ -382,14 +582,18 @@ world_data[['population', 'income', 'population_income']].head()
 
 >#### Challenge
 >
->1. Subset `world_data` to include observations from 1995 to 2001. Check that the dimensions of the resulting data frame is 1253 x 15.
-> 
->2. Subset the data to include only observation from year 2000 and onwards, from all regions except 'Asia', and retain only the columns `country`, `year`, and `sub_region`. The dimensions of the resulting data frame should be 2508 x 3.
+>1. Subset `world_data` to include observations from 1995 to 2001.
+>   Check that the dimensions of the resulting dataframe is 1253 x 15.
+>
+>2. Subset the data to include only observation from year 2000 and onwards,
+>   from all regions except 'Asia',
+>   and retain only the columns `country`, `year`, and `sub_region`.
+>   The dimensions of the resulting dataframe should be 2508 x 3.
 
 ```{python}
 # Challenge solutions
 
-# 1. 
+# 1.
 world_data.loc[world_data['year'].between(1995, 2001)].shape
 
 # 2.
@@ -400,73 +604,90 @@ world_data.loc[(world_data['year'] >= 2000) &
 
 ## Split-apply-combine techniques in pandas
 
-Many data analysis tasks can be approached using the *split-apply-combine* paradigm: split the data into groups, apply some analysis to each group, and then combine the results.
-
-`pandas` facilitates this workflow through the use of `groupby()` to split data and summary/aggregation functions such as `mean()`, which collapses each group into a single-row summary of that group. The arguments to `groupby()` are the column names that contain the *categorical* variables by which  summary statistics should be calculated. To start, compute the mean `weight` by sex.
+Many data analysis tasks can be approached using the *split-apply-combine* paradigm:
+split the data into groups,
+apply some operation on each group,
+and combine the results into a single table.
 
 ![Image credit Jake VanderPlas](img/split-apply-combine.png)
 
 *Image credit Jake VanderPlas*
 
-### Summarizing categorical data 
-
-Aggregation (or "summary") methods, such as `.sum()` and `.mean()` can be used to calculate their respective statistics on subsets (groups) in the data. When the mean is computed, the default behavior is to ignore NA values, so they only need to be dropped if they are to be excluded from the visual output.
+pandas facilitates this workflow through the use of `groupby()` to split data,
+and summary/aggregation functions such as `mean()`,
+which collapses each group into a single-row summary of that group.
+When the mean is computed,
+the default behavior is to ignore NA values.
+The arguments to `groupby()` are column names that reference *categorical* variables
+by which the summary statistics should be calculated.
 
 ```{python}
 world_data.groupby('region')['population'].sum()
 ```
 
-The output here is a series that is indexed with the grouped variable (the region) as the index and the result of the aggregation (the total population) as the values (conceptually, the only column).
+The output is a series that is indexed with the grouped variable (the region)
+and the result of the aggregation (the total population) as the values.
 
-These populations numbers are abnormally high because the summary is made for all the years instead of only one. To view only the data from this year, use the learnt methods to subset for only 2018. Compare these results to the picture in the survey that placed 4 million people in Asia and 1 million in each of the other regions.
+These population numbers are abnormally high
+because the summary was made for all the years in the dataframe,
+instead of for a single year.
+To view only the data from this year,
+we can use what we learnt previously to filter the dataframe for observations in 2018 only.
+Compare these results to the picture in the world ignorance survey
+that placed 4 million people in Asia and 1 million in each of the other regions.
 
 ```{python}
 world_data_2018 = world_data.loc[world_data['year'] == 2018]
 world_data_2018.groupby('region')['population'].sum()
 ```
 
-These numbers are closer to the survey we took earlier. 
-
-
-Individual countries can be selected from the resulting series using `loc[]`, just as previously.
+Individual countries can be selected from the resulting series using `loc[]`.
 
 ```{python}
 avg_density = world_data_2018.groupby('region')['population'].sum()
 avg_density.loc[['Asia', 'Europe']]
 ```
 
-As a shortcut, `loc[]` can be omitted when indexing a series. This is similar to selecting columns from a data frame with just `[]`.
+As a shortcut,
+`loc[]` can be omitted when indexing a series.
+This is similar to selecting columns from a dataframe with just `[]`.
 
 ```{python}
 avg_density[['Asia', 'Europe']]
 ```
 
- This indexing can be used to normalize the population numbers to the region of interest. 
+This indexing can be used to normalize the population numbers to the region of interest.
 
 ```{python}
 region_pop_2018 = world_data_2018.groupby('region')['population'].sum()
 region_pop_2018 / region_pop_2018['Europe']
 ```
 
-There are 6 times as many people living in Asia than in Europe.
+There are six times as many people living in Asia than in Europe.
 
-
-Groups can also be created from multiple columns, e.g. it could be interesting to compare the how densely populated countries are on average in different income brackets around the world.
+Groups can also be created from multiple columns,
+e.g. it could be interesting to compare how densely populated countries are on average
+in different income brackets around the world.
 
 ```{python}
 world_data_2018.groupby(['region', 'income_group'])['pop_density'].mean()
 ```
 
-Note that `income_group` is an ordinal variable, i.e. a categorical variable with an inherent order to it. Here, `pandas` has not listed the values of that variable in the order we would expect (low, lower-middle, upper-middle, high). The order of a variable can be specified in the data frame itself, using the top level `pandas` function `Categorical()`.
+Note that `income_group` is an ordinal variable,
+i.e. a categorical variable with an inherent order to it.
+pandas has not listed the values of that variable in the order we would expect
+(low, lower-middle, upper-middle, high).
+The order of a categorical variable can be specified in the dataframe,
+using the top level pandas function `Categorical()`.
 
 ```{python}
-# Reassign in the main data frame since we will use more than just the 2018 data later
+# Reassign in the main dataframe since we will use more than just the 2018 data later
 world_data['income_group'] = (
     pd.Categorical(world_data['income_group'], ordered=True,
                    categories=['Low', 'Lower middle', 'Upper middle', 'High'])
 )
 
-# Need to recreate the 2018 data frame since the categorical was changed in the main frame
+# Need to recreate the 2018 dataframe since the categorical was changed in the main frame
 world_data_2018 = world_data.loc[world_data['year'] == 2018]
 world_data_2018['income_group'].dtype
 ```
@@ -475,7 +696,9 @@ world_data_2018['income_group'].dtype
 world_data_2018.groupby(['region', 'income_group'])['pop_density'].mean()
 ```
 
-Now the values appear in the order we would expect. The value for Asia in the high income bracket looks suspiciously high. It would be interesting to see which countries were averaged to that value.
+Now the values appear in the order we would expect.
+The value for Asia in the high income bracket looks suspiciously high.
+It would be interesting to see which countries were averaged to that value.
 
 ```{python}
 world_data_2018.loc[(world_data['region'] == 'Asia') &
@@ -483,26 +706,34 @@ world_data_2018.loc[(world_data['region'] == 'Asia') &
                     ['country', 'pop_density']]
 ```
 
-Extreme values, such as the city-state Singapore, can heavily skew averages and it could be a good idea to use a more robust statistics such as the median instead.
+Extreme values,
+such as the city-state Singapore,
+can heavily skew averages
+and it could be a good idea to use a more robust statistics such as the median instead.
 
 ```{python}
 world_data_2018.groupby(['region', 'income_group'])['pop_density'].median()
 ```
 
-The returned series has an index that is a combination of the columns `region` and `sub_region`, and referred to as a `MultiIndex`. The same syntax as previously can be used to select rows on the species-level.
+ <!--TODO remove? -->
+The returned series has an index that is a combination of the columns `region` and `sub_region`,
+and referred to as a `MultiIndex`.
+The same syntax as previously can be used to select rows on the species-level.
 
 ```{python}
 med_density_2018 = world_data_2018.groupby(['region', 'income_group'])['pop_density'].median()
 med_density_2018[['Africa', 'Americas']]
 ```
 
-To select specific values from both levels of the `MultiIndex`, a list of tuples can be passed to `loc[]`.
+To select specific values from both levels of the `MultiIndex`,
+a list of tuples can be passed to `loc[]`.
 
 ```{python}
 med_density_2018.loc[[('Africa', 'High'), ('Americas', 'High')]]
 ```
 
-To select only the low income values from all region, the `xs()` (cross section) method can be used.
+To select only the low income values from all region,
+the `xs()` (cross section) method can be used.
 
 ```{python}
 med_density_2018.xs('Low', level='income_group')
@@ -514,23 +745,32 @@ The names and values of the index levels can be seen by inspecting the index obj
 med_density_2018.index
 ```
 
-Although `MultiIndexes` offer succinct and fast ways to access data, they also requires memorization of additional syntax and are strictly speaking not essential unless speed is of particular concern. It can therefore be easier to reset the index, so that all values are stored in columns.
+Although `MultiIndexes` offer succinct and fast ways to access data,
+they also requires memorization of additional syntax
+and are strictly speaking not essential unless speed is of particular concern.
+It can therefore be easier to reset the index,
+so that all values are stored in columns.
 
 ```{python}
 med_density_2018_res = med_density_2018.reset_index()
 med_density_2018_res
 ```
 
-After resetting the index, the same comparison syntax introduced earlier can be used instead of `xs()` or passing lists of tuples to `loc[]`.
+After resetting the index,
+the same comparison syntax introduced earlier can be used instead of `xs()` or passing lists of tuples to `loc[]`.
 
 ```{python}
 med_density_2018_asia = med_density_2018_res.loc[med_density_2018_res['income_group'] == 'Low']
 med_density_2018_asia
 ```
 
-`reset_index()` grants the freedom of not having to work with indexes, but it is still worth keeping in mind that selecting on an index level with `xs()` can be orders of magnitude faster than using boolean comparisons (on large data frames).
+`reset_index()` grants the freedom of not having to work with indexes,
+but it is still worth keeping in mind that selecting on an index level with `xs()`
+can be orders of magnitude faster than using boolean comparisons on large dataframes.
 
-The opposite operation (to create an index) can be performed with `set_index()` on any column (or combination of columns) that creates an index with unique values.
+ <!--TODO remove? -->
+The opposite operation of creating an index from an existing columns
+can be performed with `set_index()` on any column (or combination of columns) that creates an index with unique values.
 
 ```{python}
 med_density_2018_asia.set_index(['region', 'income_group'])
@@ -540,7 +780,9 @@ med_density_2018_asia.set_index(['region', 'income_group'])
 >
 > 1. Which is the highest population density in each region?
 >
-> 2. The low income group for the Americas had the same population density for both the mean and the median. This could mean that there are few observations in this group. List all the low income countries in the Americas.
+> 2. The low income group for the Americas had the same population density for both the mean and the median.
+>    This could mean that there are few observations in this group.
+>    List all the low income countries in the Americas.
 
 ```{python}
 # Challenge solutions
@@ -556,30 +798,44 @@ world_data_2018.groupby('region')['pop_density'].max()
 world_data_2018.loc[(world_data['region'] == 'Americas') & (world_data['income_group'] == 'Low'), ['country', 'pop_density']]
 ```
 
-# Multiple aggregations on grouped data
+## Multiple aggregations on grouped data
 
-Since the same grouped data frame will be used in multiple code chunks below, this can be assigned to a new variable instead of typing out the grouping expression each time.
+Since the same grouped dataframe will be used in multiple code chunks below,
+we can assigned it to a new variable
+instead of typing out the grouping expression each time.
 
 ```{python}
 grouped_world_data = world_data_2018.groupby(['region', 'sub_region'])
 grouped_world_data['life_expectancy'].mean()
 ```
 
-Instead of using the `mean()` or `sum()` methods directly, the more general `agg()` method could be called to aggregate by *any* existing aggregation functions. The equivalent to the `mean()` method would be to call `agg()` and specify `'mean'`.
+Instead of using the `mean()` or `sum()` methods directly,
+the more general `agg()` method could be called
+to aggregate by any existing aggregation functions.
+The equivalent to the `mean()` method would be to call `agg()` and specify `'mean'`.
 
 ```{python}
 grouped_world_data['life_expectancy'].agg('mean')
 ```
 
-This general approach is more flexible and powerful since multiple aggregation functions can be applied in the same line of code by passing them as a list to `agg()`. For instance, the standard deviation and mean could be computed in the same call by passing them in a list.
+This general approach is more flexible and powerful,
+since multiple aggregation functions can be applied in the same line of code
+by passing them as a list to `agg()`.
+For instance,
+the standard deviation and mean could be computed in the same call:
 
 ```{python}
 grouped_world_data['life_expectancy'].agg(['mean', 'std'])
 ```
 
-The returned output is in this case a data frame and the `MultiIndex` is indicated in bold font.
+The returned output is in this case a dataframe
+and the column `MultiIndex` is indicated in bold font.
 
-By passing a dictionary to `.agg()` it is possible to apply different aggregations to the different columns. Long code statements can be broken down into multiple lines if they are enclosed by parentheses, brackets or braces, something that will be described in detail later.
+By passing a dictionary to `.agg()`
+it is possible to apply different aggregations to the different columns.
+Long code statements can be broken down into multiple lines
+if they are enclosed by parentheses, brackets, or braces,
+something that will be described in detail later.
 
 ```{python}
 grouped_world_data[['population', 'income']].agg(
@@ -589,16 +845,22 @@ grouped_world_data[['population', 'income']].agg(
 )
 ```
 
-There are plenty of aggregation methods available in pandas (e.g. `sem`, `mad`, `sum`, most of which can be seen at [the end of this section](https://pandas.pydata.org/pandas-docs/stable/groupby.html#aggregation) in the `pandas` documentation, or explored using tab-complete on the grouped data frame).
+There are plenty of aggregation methods available in pandas
+(e.g. `sem`, `mad`, `sum`),
+most of which can be seen at [the end of this section] in the `pandas` documentation,
+or explored using tab-complete on the grouped dataframe.
+
+[the end of this section]: https://pandas.pydata.org/pandas-docs/stable/groupby.html#aggregation
 
 ```{python}
-# This is a side note, no need to bring up unless someone has issues
+# This is a side note if there are issues with tab completion
 # Tab completion might only work like this:
 # find_agg_methods = grouped_world_data['weight']
 # find_agg_methods.<tab>
 ```
 
-Even if a function is not part of the `pandas` library, it can be passed to `agg()`.
+Even if a function is not part of the `pandas` library,
+it can be passed to `agg()`.
 
 ```{python}
 import numpy as np
@@ -606,14 +868,15 @@ import numpy as np
 grouped_world_data['pop_density'].agg(np.mean)
 ```
 
-Any function can be passed like this, including user-created functions. 
-
+Any function can be passed like this,
+including functions you create yourself.
 
 > #### Challenge
 >
 > 1. What's the mean life expectancy for each income group in 2018?
-> 
-> 2. What's the min, median, and max life expectancies for each income group within each region?
+>
+> 2. What's the min, median, and max life expectancies
+>    for each income group within each region?
 
 ```{python}
 # Challenge solutions
@@ -631,7 +894,13 @@ world_data_2018.groupby(['region', 'income_group'])['life_expectancy'].agg(['min
 
 ### Using `size()` to summarize categorical data 
 
-When working with data, it is common to want to know the number of observations present for each categorical variable. For this, `pandas` provides the `size()` method. For example, to find the number of observations (in this case unique countries during year 2018) per region:
+When working with data,
+we commonly want to know the number of observations present for each categorical variable.
+For this,
+pandas provides the `size()` method.
+For example,
+to find the number of observations per region
+(in this case unique countries during year 2018):
 
 ```{python}
 world_data_2018.groupby('region').size()
@@ -643,25 +912,41 @@ world_data_2018.groupby('region').size()
 world_data_2018.groupby(['region', 'income_group']).size()
 ```
 
-If there are many groups, `size()` is not that useful on its own. For example, it is difficult to quickly find the five most abundant species among the observations.
+If there are many groups,
+`size()` is not that useful on its own.
+For example,
+it is difficult to quickly find the five most abundant species among the observations.
 
 ```{python}
 world_data_2018.groupby('sub_region').size()
 ```
 
-Since there are many rows in this output, it would be beneficial to sort the table values and display the most abundant species first. This is easy to do with the `sort_values()` method.
+Since there are many rows in this output,
+it would be beneficial to sort the table values and display the most abundant species first.
+This is easy to do with the `sort_values()` method.
 
 ```{python}
 world_data_2018.groupby('sub_region').size().sort_values()
 ```
 
-That's better, but it could be helpful to display the most abundant species on top. In other words, the output should be arranged in descending order.
+That's better,
+but it could be helpful to display the most abundant species on top.
+In other words,
+the output should be arranged in descending order.
 
 ```{python}
 world_data_2018.groupby('sub_region').size().sort_values(ascending=False).head(5)
 ```
 
-Looks good! By now, the code statement has grown quite long because many methods have been *chained* together. It can be tricky to keep track of what is going on in long method chains. To make the code more readable, it can be broken up multiple lines by adding a surrounding parenthesis.
+Looks good!
+
+### Method chaining
+
+By now,
+the code statement has grown quite long because many methods have been *chained* together.
+It can be tricky to keep track of what is going on in long method chains.
+To make the code more readable,
+it can be broken up multiple lines by adding a surrounding parenthesis.
 
 ```{python}
 (world_data_2018
@@ -672,25 +957,30 @@ Looks good! By now, the code statement has grown quite long because many methods
 )
 ```
 
-This looks neater and makes long method chains easier to reads. There is no absolute rule for when to break code into multiple line, but always try to write code that is easy for collaborators (your most common collaborator is a future version of yourself!) to understand.
+This looks neater and makes long method chains easier to reads.
+There is no absolute rule for when to break code into multiple line,
+but always try to write code that is easy for collaborators to understand.
+Remember that your most common collaborator is a future version of yourself!
 
-`pandas` actually has a convenience function for returning the top five results, so the values don't need to be sorted explicitly.
+pandas has a convenience function for returning the top five results,
+so the values don't need to be sorted explicitly.
 
 ```{python}
 (world_data_2018
      .groupby(['sub_region'])
      .size()
-     .nlargest() # the default is 5
+     .nlargest()  # the default is 5
 )
 ```
 
-To include more attributes about these countries, add those columns to `groupby()`.
+To include more attributes about these countries,
+add those columns to `groupby()`.
 
 ```{python}
 (world_data_2018
      .groupby(['region', 'sub_region'])
      .size()
-     .nlargest() # the default is 5
+     .nlargest()  # the default is 5
 )
 ```
 
@@ -701,10 +991,13 @@ world_data.head()
 >#### Challenge
 >
 > 1. How many countries are there in each income group worldwide?
-> 2. Assign the variable name `world_data_2015` to a data frame containing only the values from year 2015 (e.g. the same way as `world_data_2018` was created)
-> 3. 
->    1. For those countries where women went to school longer than men, how many are in each income group.
->    2. Do the same as above but for countries where men went to school longer than women. What does this distribution tell you?
+> 2. Assign the variable name `world_data_2015` to a dataframe containing only the values from year 2015
+>    (e.g. the same way as `world_data_2018` was created)
+> 3.
+>    a. For those countries where women went to school longer than men,
+>       how many are there in each income group.
+>    b. Do the same as above but for countries where men went to school longer than women.
+>       What does this distribution tell you?
 
 ```{python}
 # Challenge solutions
@@ -729,9 +1022,25 @@ world_data_2015.loc[world_data_2015['years_in_school_men'] > world_data_2015['ye
 
 ### Data cleaning tips
 
+`dropna()` removes both explicit `NaN` values
+and value that pandas assumed to be `NaN`,
+such as the non-numeric values in the life_expectancy column.
 
-`dropna()` removes both explicit `NaN` values and value that pandas are assumed to be `NaN`, such as the non-numeric values in the life_expectancy column. Non-numeric values can also be coerced into explicit `NaN` values via the `to_numeric()` top level function.
 
 ```{python}
-pd.to_numeric(clean_df['life_expectancy'], errors='coerce')
+world_data_2018.dropna()
+```
+
+Instead of dropping observations that has `NaN` values in a any column,
+a subset of columns can be considered.
+
+```{python}
+world_data_2018.dropna(subset='life_expectancy'])
+```
+
+Non-numeric values can also be coerced into explicit `NaN` values
+via the `to_numeric()` top level function.
+
+```{python}
+world_data_2018['life_expectancy'], errors='coerce')
 ```
