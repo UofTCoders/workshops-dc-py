@@ -21,7 +21,7 @@ jupyter:
   JupyterLab for exploratory data analyses.
 - Learn about some differences between Python and Excel.
 - Learn some basic Python commands.
-- Learn about the Markdown syntax and how to use it within the Jupyter Notebook.
+- Learn about the Markdown syntax and how to use it within the Jupyter notebook.
 
 ### Lesson outline
 
@@ -29,7 +29,7 @@ jupyter:
     - Advantages of text-based communication (10 min)
     - Speaking Python (5 min)
     - Natural and formal languages (10 min)
-- The Jupyter Notebook (20 min)
+- The Jupyter notebook (20 min)
 - Data analysis in Python (5 min)
     - Packages (5 min)
     - How to get help (5 min)
@@ -257,7 +257,7 @@ the scope of the project expanded to include additional programming languages,
 such as Julia and R,
 so the name was changed to "Jupyter" (JU-PY-te-R) as a reference to its core languages.
 Here,
-we will be using the [notebook] within JupyterLab,
+we will be using the [Jupyter notebook] within JupyterLab,
 which allows us to easily take notes about our analysis
 and view plots within the same document where we code.
 The notebook format also facilitates sharing of analyses,
@@ -266,7 +266,7 @@ as well as exportable as a PDF or HTML page.
 
 [JupyterLab]: https://jupyterlab.readthedocs.io/en/stable/
 [Project Jupyter]: https://jupyter.org/
-[notebook]: https://jupyter-notebook.readthedocs.io/en/stable/notebook.html
+[Jupyter notebook]: https://jupyter-notebook.readthedocs.io/en/stable/notebook.html
 
 JupyterLab is launched by running the command `jupyter-lab` from the terminal,
 or by finding it in the `Anaconda navigator` from your operating system menu.
