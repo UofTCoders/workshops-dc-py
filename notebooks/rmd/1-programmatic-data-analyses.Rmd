@@ -235,13 +235,13 @@ or if you are actively trying to find a new way of expressing a thought,
 then look it up,
 just as you would with a natural language.
 You can use your favorite search engine to find answers to your questions,
-many could have have been asked by other learners.
-One site that collects many of these questions is [StackOverflow],
-and they also have a helpful directions if you can't find what you are looking for
+many of which might already have been asked by other learners.
+One reputable hub for programming related questions is the Q&A site [StackOverflow].
+They have helpful directions if you can't find what you are looking for
 and want to [ask a question] that has not been asked previously.
 
 [StackOverflow]: https://stackoverflow.com/questions/ask
-[ask a new question]: https://stackoverflow.com/questions/ask
+[ask a question]: https://stackoverflow.com/questions/ask
 
 ## JupyterLab and the Jupyter notebook
 
@@ -336,7 +336,6 @@ and it is very handy for reports such as progress updates,
 since you can share your notes together with the analysis itself.
 
 
-
 ### A few more notebook tips
 
 The little counter on the left of each cell
@@ -408,20 +407,23 @@ more on that later.
 
 ### Exploring data with the `pandas` package
 
-`pandas` is a Python package commonly used
-to perform exploratory data analysis on spreadsheet-like data.
-The name is derived from "panel data",
-an econometrics term for multidimensional structured data sets.
-Data are easily loaded into `pandas` from CSV-files and other spreadsheet formats.
-The format `pandas` uses to represent this data is called a dataframe.
-
 For this section of the tutorial,
 the goal is to understand the concepts of data analysis in Python
 and how they are different from analyzing data in graphical programs.
 Therefore,
 it is recommend to not code along for this part,
 but rather try to get a feel for the overall workflow.
-All these steps will be covered in detail during later sections in the tutorial.
+All these steps will be covered in detail during later sections of the tutorial.
+
+Packages contain domain specific functionality,
+that is not included in the default Python installation,
+a bit like how an app can add functionality to your phone.
+`pandas` is a Python package commonly used
+to perform data analysis on spreadsheet-like data.
+The name is derived from "panel data",
+an econometrics term for multidimensional structured data sets.
+Data are easily loaded into `pandas` from CSV-files and other spreadsheet formats.
+The format `pandas` uses to represent this data is called a dataframe.
 
 For the example data,
 we will load a public dataset from the web
@@ -724,7 +726,7 @@ The Anaconda Python distribution already bundles the core Python language
 with many of the most effective Python packages for data analysis,
 so for this tutorial we don't need to install anything.
 
-### Installing packages
+#### Installing packages
 
 *This section is only included as a reference for learners to rely on from home.
 It can be skipped or covered conceptually during the workshop.*
@@ -750,7 +752,7 @@ Brief step-by-step instructions to get up and running with `conda` follow.
 
 [offical documentation]: https://docs.continuum.io/anaconda/#navigator-or-conda
 
-### Using packages
+#### Using packages
 
 As in spreadsheet software menus,
 there are lots of different tools within each Python package.
@@ -778,7 +780,7 @@ import numpy as np
 np.mean([1, 2, 3, 4, 5])
 ```
 
-### How to get help
+#### How to get help with packages and functions
 
 Once you start out using Python,
 you don't know what functions are available within each package.
