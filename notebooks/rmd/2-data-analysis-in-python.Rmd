@@ -13,10 +13,13 @@ jupyter:
     name: python3
 ---
 
-# Data analysis in Python
+<!-- #region {"toc-hr-collapsed": false} -->
+# Data analyses with pandas dataframes
 
-## Lesson preamble
+---
+<!-- #endregion -->
 
+<!-- #region {"toc-hr-collapsed": false} -->
 ### Learning objectives
 
 - Describe what a dataframe is.
@@ -26,7 +29,9 @@ jupyter:
 - Learn to clean dirty data.
 - Understand the split-apply-combine concept for data analysis.
     - Use `groupby()`, `mean()`, `agg()` and `size()` to apply this technique.
+<!-- #endregion -->
 
+<!-- #region {"toc-hr-collapsed": false} -->
 ### Lesson outline
 
 - Manipulating and analyzing data with pandas
@@ -37,12 +42,12 @@ jupyter:
 - Split-apply-combine techniques in `pandas`
     - Using `mean()` to summarize categorical data (20 min)
     - Using `size()` to summarize categorical data (15 min)
+    
 ---
+<!-- #endregion -->
 
-
-## Manipulating and analyzing data with pandas
-
-### Dataset background
+<!-- #region {"toc-hr-collapsed": true} -->
+## Dataset background
 
 Today,
 we will be working with real data about the world
@@ -64,8 +69,6 @@ Then we will learn how to dive deeper into this data using Python!
 [entertaining videos]: https://www.gapminder.org/videos/
 [The best stats you have ever seen]: https://www.youtube.com/watch?v=hVimVzgtD6w
 [this 5-10 min quiz]: http://forms.gapminder.org/s3/test-2018
-
-#### Overview of the Gapminder world data
 
 We are studying the species and weight of animals caught in plots in our study
 area. The dataset is stored as a comma separated value (CSV) file. Each row
@@ -100,6 +103,7 @@ To use a package,
 it first needs to be imported.
 
 [pandas]: https://pandas.pydata.org/
+<!-- #endregion -->
 
 ```{python}
 # pandas is given the nickname `pd`
@@ -133,6 +137,7 @@ The increasing numbers on the far left is the dataframe's index or row names.
 These are not present in CSV-file,
 but were added by `pandas` to easily distinguish between the rows.
 
+<!-- #region {"toc-hr-collapsed": true} -->
 ## What are dataframes?
 
 A dataframe is the representation of data in a tabular format,
@@ -157,6 +162,7 @@ and truncate everything in between,
 as indicated by the ellipsis (`...`).
 If we wanted to display only the first 5 lines,
 we could use the `head()` method.
+<!-- #endregion -->
 
 ```{python}
 world_data.head()
@@ -453,6 +459,9 @@ world_data[2:5]
 >3. There are at least three distinct ways to extract the last row of the dataframe.
 >   Which can you find?
 
+
+### Filtering observations
+
 The `describe()` method was mentioned above
 as a way of retrieving summary statistics of a dataframe.
 Together with `info()` and `head()`,
@@ -602,6 +611,7 @@ world_data.loc[(world_data['year'] >= 2000) &
                ['country', 'year', 'sub_region']].shape
 ```
 
+<!-- #region {"toc-hr-collapsed": true} -->
 ## Split-apply-combine techniques in pandas
 
 Many data analysis tasks can be approached using the *split-apply-combine* paradigm:
@@ -620,6 +630,7 @@ When the mean is computed,
 the default behavior is to ignore NA values.
 The arguments to `groupby()` are column names that reference *categorical* variables
 by which the summary statistics should be calculated.
+<!-- #endregion -->
 
 ```{python}
 world_data.groupby('region')['population'].sum()
@@ -798,7 +809,7 @@ world_data_2018.groupby('region')['pop_density'].max()
 world_data_2018.loc[(world_data['region'] == 'Americas') & (world_data['income_group'] == 'Low'), ['country', 'pop_density']]
 ```
 
-## Multiple aggregations on grouped data
+### Multiple aggregations on grouped data
 
 Since the same grouped dataframe will be used in multiple code chunks below,
 we can assigned it to a new variable
@@ -890,6 +901,7 @@ world_data_2018.groupby('income_group')['life_expectancy'].mean()
 world_data_2018.groupby(['region', 'income_group'])['life_expectancy'].agg(['min', 'median', 'max'])
 ```
 
+<!-- #region {"toc-hr-collapsed": true} -->
 ## Additional sections (time permitting)
 
 ### Using `size()` to summarize categorical data 
@@ -901,6 +913,7 @@ pandas provides the `size()` method.
 For example,
 to find the number of observations per region
 (in this case unique countries during year 2018):
+<!-- #endregion -->
 
 ```{python}
 world_data_2018.groupby('region').size()

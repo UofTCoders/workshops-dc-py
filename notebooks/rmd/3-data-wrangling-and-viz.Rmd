@@ -13,29 +13,37 @@ jupyter:
     name: python3
 ---
 
-# Graphically exploring data
+# Exploring data graphically
 
-- Learning Objectives
+---
 
-    - Learn how to plot with matplotlib
-    - Set universal plot settings.
-    - Produce scatter plots, line plots, and histograms using seaborn and matplotlib.
-    - Understand how to graphically explore relationships between variables.
-    - Apply grids for faceting in seaborn.
-    - Use seaborn grids with matplotlib functions
 
-- Lesson outline
+### Learning Objectives
 
-    - Data visualization with matplotlib and seaborn (10 min)
-        - Intro to plotting with matplotlib
-        - Visualizing one quantitative variable with multiple categorical variables (50 min)
-        - Visualizing the relationship of two quantitative variable with multiple categorical variables (40min)
+- Learn how to plot with matplotlib
+- Set universal plot settings.
+- Produce scatter plots, line plots, and histograms using seaborn and matplotlib.
+- Understand how to graphically explore relationships between variables.
+- Apply grids for faceting in seaborn.
+- Use seaborn grids with matplotlib functions
+
+
+### Lesson outline
+
+- Data visualization with matplotlib and seaborn (10 min)
+    - Intro to plotting with matplotlib
+    - Visualizing one quantitative variable with multiple categorical variables (50 min)
+    - Visualizing the relationship of two quantitative variable
+      with multiple categorical variables (40min)
+
+---
+
 
 ## Short review from yesterday
 
 Do you remember how to:
 
-1 Read in the data from the csv file from yesterday?
+1 - Read in the data from the csv file from yesterday?
 
 ```{python}
 import pandas as pd
@@ -46,42 +54,43 @@ world_data = pd.read_csv('https://raw.githubusercontent.com/UofTCoders/2018-09-1
 # surveys = pd.read_csv("world_data.csv")
 ```
 
-2 How to select only the columns 'country' and 'year' from the data frame?
+2 - How to select only the columns 'country' and 'year' from the data frame?
 
 ```{python}
 world_data[['country', 'year']].head() #head just to limit output
 ```
 
-3 How to select a few rows together with the columns above?
+3 - How to select a few rows together with the columns above?
 
 ```{python}
 world_data.loc[[1, 13, 24], ['country', 'year']]
 ```
 
-4 How to select only data from year 1995?
+4 - How to select only data from year 1995?
 
 ```{python}
 world_data.loc[world_data['year'] == 1995]
 ```
 
-5 Select only the rows where the region is Asia or Africa.
+5 - Select only the rows where the region is Asia or Africa.
 
 ```{python}
 world_data.loc[world_data['region'].isin(['Asia', 'Africa'])]
 ```
 
-6 Calculate the total population in each region
+6 - Calculate the total population in each region
 
 ```{python}
 world_data.groupby('region')['population'].sum()
 ```
 
-(7) Get the number of countries in each region for the year 2018.
+7 - Get the number of countries in each region for the year 2018.
 
 ```{python}
 world_data.loc[world_data['year'] == 2018].groupby('region').size()
 ```
 
+<!-- #region {"toc-hr-collapsed": true} -->
 ## Introduction to plotting
 
 Although it's essential to quantitatively assess any conclusion drawn from the data, the human visual system is still one of the most advanced apparatus to detect patterns in data and it allows for quick exploration of complex relationships. Visualizations are also a highly efficient way of communicating insights drawn from the data. Therefore, it is important to know how to graphically represent the underlying data in a way that is suitable for humans to understand.
@@ -89,7 +98,7 @@ Although it's essential to quantitatively assess any conclusion drawn from the d
 There are many plotting packages in Python, making it possible to create diverse visualizations such as interactive web graphics, 3D animations, statistical visualizations, and map-based plots. When starting out, it can be helpful to find an example of how a plot looks that you want to create and then copy and modify that code. Examples of plots can be found in many excellent online Python plotting galleries, such as [this](https://matplotlib.org/gallery.html), [this](https://seaborn.pydata.org/examples/), and [this](https://python-graph-gallery.com/all-charts/). 
 
 Our focus will be on two of the most useful packages for researchers: `matplotlib`, which is a robust, detail-oriented, low level plotting interface, and `seaborn`, which provides high level functions on top of `matplotlib` and allows the plotting calls to be expressed more in terms what is being explored in the underlying data rather than what graphical elements to add to the plot.  The high-level figures created by `seaborn` can be configured via the `matplotlib` parameters, so learning these packages in tandem is useful.
-
+<!-- #endregion -->
 
 By default, plots are displayed in a separate window rather than within the notebook. To change this option and always display plots in the notebook, run the following line. Note that in newer versions of the notebook this might not be needed, but it's good the be explicit.
 
@@ -199,7 +208,7 @@ fig.tight_layout()
 > 2. Use the documentation to also change the styling of the line in the line plot and the type of marker used in the scatter plot (you might need to search online for this).
 
 
-### Saving graphs
+### Saving plots
 
 Figures can be saved by calling the `savefig()` method and specifying the name of file to create. The resolution of the figure can be controlled by the `dpi` parameter.
 
@@ -249,7 +258,7 @@ This plot shows how the world population has been steadingly increasing since th
 
 It is possible to use `matplotlib` in this way to explore visual relationships in data frame. However, it it a little cumbersome already with these simple examples and it will get more complicated once we want to include more variables, e.g. stratifying the data in subplots based on region and income level in the example above would include writing double loops and keeping track of plot layout and grouping variables manually.
 
-
+<!-- #region {"toc-hr-collapsed": false} -->
 ## Visual data exploration with `seaborn`
 
 When visually exploring data with lots of variables, it is in many cases easier to think in terms of what is to be explored in the data, rather than what graphical elements are to be added to the plot. For example, instead of instructing the computer to "go through a data frame and plot any observations of country-X in blue, any observations of country-Y in red, etc", it can be easier to just type "color the data by country".
@@ -258,6 +267,7 @@ Facilitating semantic mappings of data variable to graphical elements is one of 
 Thanks to its functional way of interfacing with data, only minimal changes are required if the underlying data change or to switch the type of plot used for the visualization. `seaborn` provides a language that facilitates thinking about data in ways that are conducive for exploratory data analysis and allows for the creation of publication quality plots with minimal adjustments and tweaking.
 
 The syntax of plotting with `seaborn` was introduced briefly already in the introductory lecture and it is similar to how matplotlib plots data frames. For example, to make the same scatter plot as above:
+<!-- #endregion -->
 
 ```{python}
 import seaborn as sns
@@ -284,7 +294,7 @@ To change from showing the average world population per country per year to show
 sns.lineplot(x='year', y='population', data=world_data, estimator='sum', ci=None)
 ```
 
-## Changing graph aesthetics
+### Changing graph aesthetics
 
 Before continuing the exploration of the world population data, let's discuss how to customize the appearance of our plots. The returned object is an matplotlib axes, so all configuration available through `matplotlib` can be applied to the returned object by first assigning it to a variable name (`ax` by convention).
 
@@ -335,7 +345,8 @@ sns.despine()
 
 If the style options exposed through `seaborn` are not sufficient, it is possible to change all plot parameters directly through the `matplotlib` [rc and style interfaces](https://matplotlib.org/users/customizing.html#customizing-matplotlib).
 
-## Exploring relationships between two quantitative variables
+
+### Exploring relationships between two quantitative variables
 
 As mentioned above, the strength of a descriptive plotting syntax is being able to describe the plot appearance in human-friendly vocabulary and have the computer assign variables to graphical objects accordingly. For example, to plot subsets of the data in different colors, the `hue` parameter can be used.
 
@@ -370,10 +381,11 @@ sns.lineplot(x='year', y='population', hue='income_group', style='income_group',
 
 The legend now has the colors in the expected order. This modification also ensures that when making plots with income groups on the x- or y-axis, they will be plotted in the right order.
 
-
+<!-- #region {"toc-hr-collapsed": true} -->
 ### Conditioning quantitative relationships on qualitative variables
 
 It is difficult to explore multiple categorical relationships within one single plot. For example, to see how the income groups compare within each region, the `hue` and `style` variables could be used for different variables, but this makes the plot very difficult to interpret.
+<!-- #endregion -->
 
 ```{python}
 sns.lineplot(x='year', y='population', hue='income_group', style='region',
@@ -541,8 +553,9 @@ sns.relplot(x='co2_total', y='co2_per_capita', col='year', hue='income_group',
             data=world_data_1920_2018, col_wrap=3, height=3.5)
 ```
 
-## How to know which relationships to start exploring.
-
+<!-- #region {"toc-hr-collapsed": true} -->
+### How to know which relationships to start exploring?
+<!-- #endregion -->
 
 In the exercises above, we chose suitable variables to illustrate the plotting concepts. Often when doing EDA, it will not be as easy to know what comparison to start with. Unless you have good reason for choosing to look at a particular relationship, starting by plotting the pairwise relationships of all quantitative variables can be helpful.
 
@@ -626,12 +639,13 @@ Now it is clearer to see what is going on. Reducing child mortality is correlate
 
 It is important to note that from a plot like this, it is not possible to tell causation, just correlation. However, in the [gapminder video library](https://www.gapminder.org/videos/) there are a few videos on this topic, including [this](https://www.gapminder.org/answers/will-saving-poor-children-lead-to-overpopulation/) and [this](https://www.gapminder.org/videos/population-growth-explained-with-ikea-boxes/) discussing how reducing poverty can help slow down population growth through decreased family sizes. Current estimations suggests that the word population will stabilize around 11 billion ppl and the children per woman will be close to 2 worldwide in year 2100.
 
-
-## Exploring a single quantitative variable across multiple levels of a categorical variable
+<!-- #region {"toc-hr-collapsed": true} -->
+### Exploring a single quantitative variable across multiple levels of a categorical variable
 
 When exploring a single quantitative variable, we can choose between plotting every data point (e.g. categorical scatterplots such as swarm plots and strip plots), an approximation of the distribution (e.g. histograms and violinplots), or several distribution statistics including measures of central tendency (e.g. boxplots and barplots).
 
 A good place to start is to visualize the variable's distribution with `distplot()`.
+<!-- #endregion -->
 
 ```{python}
 # Let's look at life expectancy during 2018

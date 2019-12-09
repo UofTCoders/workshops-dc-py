@@ -13,7 +13,11 @@ jupyter:
     name: python3
 ---
 
-## Lesson preamble
+<!-- #region {"toc-hr-collapsed": false} -->
+# Introduction to programmatic data analyses
+
+---
+<!-- #endregion -->
 
 ### Lesson objectives
 
@@ -22,6 +26,7 @@ jupyter:
 - Learn about some differences between Python and Excel.
 - Learn some basic Python commands.
 - Learn about the Markdown syntax and how to use it within the Jupyter notebook.
+
 
 ### Lesson outline
 
@@ -37,6 +42,7 @@ jupyter:
     - Visualizing data with `seaborn` (10 min)
 
 
+
 The aim of this workshop is to teach you basic concepts, skills, and tools for working with data,
 so that you can get more done in less time while having more fun.
 You will learn how to use the programming language Python
@@ -46,6 +52,9 @@ This first section will be a brief introduction to communicating with your compu
 rather than by pointing and clicking in a graphical user interface,
 which might be what you are used to.
 
+---
+
+<!-- #region {"toc-hr-collapsed": true} -->
 ## Communicating with computers
 
 Before we get into practically doing things,
@@ -85,7 +94,7 @@ and reliably clean data sets.
 Even when using a spreadsheet program to record data,
 it is often beneficial to have some some basic programming skills
 to facilitate the analyses of those data.
-
+<!-- #endregion -->
 
 ### Advantages of text-based communication
 
@@ -386,7 +395,7 @@ the "Commands" tab can be used.
 Existing documents can be opened from the "File Browser" tab.
 
 
-<!-- #region -->
+<!-- #region {"toc-hr-collapsed": true} -->
 ## Data analysis in Python
 
 To access additional functionality in a spreadsheet program,
@@ -403,8 +412,9 @@ Don't worry if you forget the exact expression,
 it is often enough to just type the few first letters and then hit <kbd>Tab</kbd>,
 to show the available options,
 more on that later.
+<!-- #endregion -->
 
-
+<!-- #region -->
 ### Exploring data with the `pandas` package
 
 For this section of the tutorial,
@@ -484,7 +494,9 @@ The `groupby()` method *splits* the observations into groups,
 the `mean()` is *applied* an operation to each group,
 and the results are *combined* into the table that we can see here.
 We will learn much more about this in a later lecture.
+<!-- #endregion -->
 
+<!-- #region -->
 ### Visualizing data with `seaborn`
 
 A crucial part of any exploratory data analysis is data visualization.
@@ -559,11 +571,13 @@ and a lot of the variation in our data can be explained by which species the obs
 This has been an introduction to what data analysis looks like with Python in the Jupyter Notebook.
 We will get into details about all the steps of this workflow in the following lectures,
 and you can keep referring back to this lecture as a high level overview of the process.
+<!-- #endregion -->
 
-
+<!-- #region {"toc-hr-collapsed": false} -->
 # Introduction to programming in Python
 
-## Lesson preamble
+---
+<!-- #endregion -->
 
 ### Learning objectives
 
@@ -571,14 +585,15 @@ and you can keep referring back to this lecture as a high level overview of the 
 - Define the following data types in Python: strings, integers, and floats.
 - Define the following as it relates to Python: lists, tuples, and dictionaries.
 
+
 ### Lesson outline
 
 - Introduction to programming in Python (50 min)
 
 ---
 
-
-### Operators
+<!-- #region -->
+## Operators
 
 Python can be used as a calculator,
 where mathematical calculations use familiar syntax for operators such as `+`, `-`, `/`, and `*`.
@@ -603,8 +618,10 @@ and they will be ignored by the Python interpreter.
 # `**` means "to the power of"
 2 ** 3
 ```
+<!-- #endregion -->
 
-### Variables
+<!-- #region -->
+## Variables
 
 Values can be stored as variables,
 which is a little like giving values nicknames
@@ -648,8 +665,10 @@ A space can be added to separate the words.
 ```{python}
 b + ' ' + c
 ```
+<!-- #endregion -->
 
-### Functions
+<!-- #region -->
+## Functions
 
 To find out what type a variable is,
 the built-in function `type()` can be used.
@@ -705,8 +724,10 @@ b
 ```
 
 The output from `type()` is formatted slightly differently when it is printed.
+<!-- #endregion -->
 
-### Packages
+<!-- #region {"toc-hr-collapsed": true} -->
+## Packages
 
 Certain functions,
 like the ones we used above,
@@ -725,8 +746,9 @@ Python packages can be downloaded from central repositories online and installed
 The Anaconda Python distribution already bundles the core Python language
 with many of the most effective Python packages for data analysis,
 so for this tutorial we don't need to install anything.
+<!-- #endregion -->
 
-#### Installing packages
+### Installing packages
 
 *This section is only included as a reference for learners to rely on from home.
 It can be skipped or covered conceptually during the workshop.*
@@ -752,7 +774,8 @@ Brief step-by-step instructions to get up and running with `conda` follow.
 
 [offical documentation]: https://docs.continuum.io/anaconda/#navigator-or-conda
 
-#### Using packages
+
+### Using packages
 
 As in spreadsheet software menus,
 there are lots of different tools within each Python package.
@@ -761,7 +784,6 @@ if you want to use numerical Python functions,
 you can import the **num**erical **py**thon module,
 `numpy`.
 You can then access any function by writing `numpy.<function_name>`.
-<!-- #endregion -->
 
 ```{python}
 import numpy
@@ -780,7 +802,7 @@ import numpy as np
 np.mean([1, 2, 3, 4, 5])
 ```
 
-#### How to get help with packages and functions
+### How to get help with packages and functions
 
 Once you start out using Python,
 you don't know what functions are available within each package.
@@ -814,7 +836,8 @@ you will notice that this is often faster than looking for functions in menus.
 However,
 sometimes you forget and it is useful to get hints via the help system described above.
 
-### Comparisons
+
+## Comparisons
 
 Python also allows to use comparison and logic operators
 (`<`, `>`, `==`, `!=`, `<=`, `>=`, `and`, `or`, `not`),
@@ -877,8 +900,9 @@ will only be executed if the conditional statement above is `True`.
 > 1. Assign `a*2` to the variable name `two_a`.
 > 2. Change the value of `a` to `3`. What is the value of `two_a` now, `6` or `10`?
 
-
+<!-- #region {"toc-hr-collapsed": true} -->
 ## Array-like Python types
+<!-- #endregion -->
 
 ### Lists
 

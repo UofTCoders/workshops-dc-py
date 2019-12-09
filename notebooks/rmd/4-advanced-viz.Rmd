@@ -13,7 +13,10 @@ jupyter:
     name: python3
 ---
 
-## Lesson preamble
+# Advanced visualizations
+
+---
+
 
 ### Lecture objectives
 
@@ -21,6 +24,7 @@ jupyter:
 - Learn how to avoid common pitfalls when plotting large data sets.
 - Learn about tidy data.
 - Transform data from the long to wide format.
+
 
 ### Lecture outline
 
@@ -30,8 +34,11 @@ jupyter:
     - Avoiding saturated plots (40 min)
 - Reshaping with data with `pivot()`, `pivot_table()`, and `melt()` (40 min)
 
+---
 
-# Visualization tips and tricks
+<!-- #region {"toc-hr-collapsed": true} -->
+## Choosing informative plots for categorical data
+<!-- #endregion -->
 
 ```{python}
 # Setup by loading the data set from the previous lecture
@@ -44,8 +51,6 @@ world_data = pd.read_csv('../data/world-data-gapminder.csv')
 world_data.head()
 ```
 
-## Choosing informative plots for categorical data
-
 When visualizing data it is important to explore different plotting options and reflect on which one best conveys the information within the data. In the following code cells, a sample data set is loaded from the `seaborn` data library in order to illustrate some advantages and disadvantages between categorical plot types. This is the same data as was used in lecture 1 and contains three different species of iris flowers and measurements of their sepals and petals.
 
 First let's set the `seaborn` style to something different than last lecture, and to subset the data to only include observations from 2018.
@@ -57,8 +62,6 @@ sns.set(context='notebook', style='darkgrid', palette='muted', font_scale=1.3)
 
 world_data_2018 = world_data.loc[world_data['year'] == 2018]
 ```
-
-### Bar plots
 
 A common visualization when comparing a groups is to create a barplot of the means of each group and plot them next to each other.
 
@@ -109,7 +112,7 @@ fig.tight_layout()
 >1. How many data points and/or distribution statistics are displayed in each of these plots 
 >2. Out of the these plots, which one do you think is the most informative and why? Which is the most true to the underlying data?
 
-
+<!-- #region {"toc-hr-collapsed": true} -->
 ### Pros and cons of different graph types
 
 We will deepen the discussion around some of these ideas, in the context of the following plot:
@@ -119,7 +122,7 @@ We will deepen the discussion around some of these ideas, in the context of the 
 *Reproduced with permission from [Dr. Koyama's poster](http://biostat.mc.vanderbilt.edu/wiki/pub/Main/TatsukiKoyama/Poster3.pdf)*
 
 It is generally advisable to avoid "decorative" plot elements that do not convey extra information about the data, *especially* when such elements hide the real data. An early champion of this idea was Edward Tufte, who details how to reduce so called non-data ink and many other things in his book [The visual display of quantitative information](https://www.edwardtufte.com/tufte/books_vdqi). In the bar chart above, the only relevant information is given by the where the rectangles of the bars ends on the y-axis, the rest of it is unnecessary. Instead of using the rectangle's height, a simpler marker (circle, square, etc) could have been used to indicate the height on the y-axis. Note that the body of the rectangle is not representative for where the data lies, there are probably no data points close to 0, and several above the rectangle.
-
+<!-- #endregion -->
 
 Barplots are especially misleading when used as data summaries, as in the
 example above. In a summary plot, only two distribution parameters (a measure of
@@ -181,7 +184,7 @@ This is not very helpful in this particular case, but it is good to be aware of 
 >
 >1. Combine a `stripplot()` with a `boxplot()`. Set the `jitter` parameter to distribute the dots so that they are not all on one line.
 
-
+<!-- #region {"toc-hr-collapsed": true} -->
 ## Making plots accessible through suitable color choices
 
 Colour blindness is common in the population, and red-green colour blindness in particular affects 8% of men and 0.5% of women. Guidelines for making your visualizations more accessible to people affected by colour blindness, will in many cases also improve the interpretability of your graphs for people who have standard color vision. Here are a couple of examples:
@@ -193,7 +196,7 @@ Don't use jet rainbow-coloured heatmaps. Jet colourmaps are often the default he
 Colour blind viewers are going to have a difficult time distinguishing the meaning of this heat map if some of the colours blend together.
 
 ![](./img/colourblind.png)
-
+<!-- #endregion -->
 
 The jet colormap should be avoided for other reasons, including that the sharp transitions between colors introduces visual threshold levels that do not represent the underlying continuous data. Another issue is luminance, or brightness. For example, your eye is drawn to the yellow and cyan regions, because the luminance is higher. This can have the unfortunate effect of highlighting features in your data that don't actually exist, misleading your viewers! It also means that your graph is not going to translate well to greyscale in publication format.
 
@@ -347,7 +350,7 @@ sns.jointplot(x='carat', y='price', data=diamonds, kind='kde',
               marginal_kws={'color': 'indigo'})
 ```
 
-## Reshaping data between long and wide formats
+# Reshaping data
 
 Data is often presented in a so-called wide format, e.g. with one column per measurement:
 
@@ -368,8 +371,6 @@ This can be a great way to display data so that it is easily interpretable by hu
 |     B|        age|   28|
 
 `pandas` enables a wide range of manipulations of the structure of data, including alternating between the long and wide format. The survey data presented here is in a tidy format. To facilitate visual comparisons of the relationships between measurements across columns, it would be beneficial to display this data in the wide format. For example, what is the relationship between mean weights of different species caught at the same plot type?
-
-### Subset data
 
 To facilitate the visualization of the the transformations between wide and tidy data,  it is beneficial to create a subset of the data.
 
@@ -394,7 +395,7 @@ world_data_2014_co2avg = (
 world_data_2014_co2avg
 ```
 
-### Long to wide with `pivot()` and `pivot_table()`
+## Long to wide with `pivot()` and `pivot_table()`
 
 The data we created is a long or tidy format. A long to wide transformation would be suitable to effectively visualize the relationship between the average co2 emission of the countries based on their region and income. 
 
@@ -436,7 +437,7 @@ The columns and rows can be swapped in the call to `pivot_table()`. This is usef
 world_data_2014.pivot_table(index='income_group', columns='region', values='co2_per_capita')
 ```
 
-### Wide to long with `melt()`
+## Wide to long with `melt()`
 
 It is also a common operation to reshape data from the wide to the long format, e.g. when getting the data into the most suitable format for analysis. For this transformation, the `melt()` method can be used to sweep up a set of columns into one key-value pair.
 
@@ -606,12 +607,13 @@ To get rid of certain rows or columns, the `drop()` method can be used.
 clean_df.drop(index=[1, 4, 5], columns=['region', 'year', 'country'])
 ```
 
+<!-- #region {"toc-hr-collapsed": true} -->
 > # Challenge
 >
 > 1. Create a new data frame called `world_data_co2` from the `world_data` data that contains only the `country`, `year`, `population` and `co2_pet_capita` columns and no NA values.
 > 2. Create a new column in `clean_df_co2` called `total_co2` containing the total co2 emissions of the country using the per capita value in `co2_per_capita` and the `population` column.
 > 3. Retrieve all observations that have a `total_co2` value greater than 10,000,000.
-
+<!-- #endregion -->
 
 ### More general resources on plotting
 
