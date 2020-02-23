@@ -953,6 +953,12 @@ the output should be arranged in descending order.
 world_data_2018.groupby('sub_region').size().sort_values(ascending=False).head(5)
 ```
 
+A shortcut for sorting and returning the top values is to use `nlargest()`.
+
+```{python}
+world_data_2018.groupby('sub_region').size().nlargest(5)
+```
+
 Looks good!
 
 ### Method chaining
