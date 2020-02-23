@@ -134,7 +134,8 @@ The Jupyter notebook displays pandas dataframes in a tabular format,
 and adds cosmetic conveniences such as the bold font type for the column and row names,
 the alternating grey and white zebra stripes for the rows,
 and highlighting of the row the mouse pointer hovers over.
-The increasing numbers on the far left is the dataframe's index or row names.
+The increasing numbers on the far left are the dataframe's index or row names,
+and the number of rows and columns are printed at the end of the output.
 These are not present in CSV-file,
 but were added by `pandas` to easily distinguish between the rows.
 
@@ -455,7 +456,7 @@ world_data[2:5]
 >   Remember that Python indexing starts at 0!
 >
 >2. How can you get the same result as from `world_data.head()`
->   by using row slices instead of the `head()` method?
+>   by using row slicing instead of the `head()` method?
 >
 >3. There are at least three distinct ways to extract the last row of the dataframe.
 >   Which can you find?
