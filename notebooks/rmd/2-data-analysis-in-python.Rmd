@@ -117,7 +117,7 @@ we read data that we have compiled from Gapminder
 and uploaded to our GitHub repository.
 
 ```{python}
-url = 'https://raw.githubusercontent.com/UofTCoders/2018-09-10-utoronto/go-pages/data/world-data-Gapminder.csv'
+url = 'https://raw.githubusercontent.com/UofTCoders/workshops-dc-py/master/data/processed/world-data-gapminder.csv'
 world_data = pd.read_csv(url)
 ```
 
