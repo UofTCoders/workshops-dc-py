@@ -232,7 +232,7 @@ Also note that there can be exceptions to the schema above,
 but it is a useful general guide.
 
 After reading in the data into a dataframe,
-`head()` and `info()` are two of the most useful methods
+`info()` is one the most useful methods
 to get an idea of the structure of this dataframe.
 There are a few additional methods
 that can facilitate the understanding of what a dataframe contains:
@@ -329,7 +329,7 @@ pandas recognizes the column names in the dataframe,
 so tab autocompletion can be used when typing out the column name.
 
 ```{python}
-world_data['year'].head()
+world_data['year']
 ```
 
 The name of the column and its data type is shown at the bottom.
@@ -343,7 +343,7 @@ the columns names can be passed as a list inside the brackets
 one for the dataframe indexing and one for the list).
 
 ```{python}
-world_data[['country', 'year']].head()
+world_data[['country', 'year']]
 ```
 
 The output is displayed a bit differently this time.
@@ -397,7 +397,7 @@ but only a subset of columns,
 the colon character (`:`) can be used.
 
 ```{python}
-world_data.loc[:, ['country', 'year']].head() # head() is used to limit the length of the output
+world_data.loc[:, ['country', 'year']]
 ```
 
 The same syntax can be used to select all columns,
@@ -466,7 +466,7 @@ world_data[2:5]
 
 The `describe()` method was mentioned above
 as a way of retrieving summary statistics of a dataframe.
-Together with `info()` and `head()`,
+Together with glancing at the rows in the data frame and using `info()` method,
 this is often a good place to start exploratory data analysis
 as it gives a helpful overview of the numeric valuables the data set.
 
@@ -561,7 +561,7 @@ With the `|` operator, rows matching either of the supplied criteria are returne
 ```{python}
 world_data.loc[(world_data['year'] == 1800) |
                (world_data['year'] == 1801) ,
-               ['country', 'year']].head()
+               ['country', 'year']]
 ```
 
 Additional useful ways of subsetting the data includes `between()`,
@@ -588,7 +588,7 @@ we could multiple the income per person with the population:
 
 ```{python}
 world_data['population_income'] = world_data['income'] * world_data['population']
-world_data[['population', 'income', 'population_income']].head()
+world_data[['population', 'income', 'population_income']]
 ```
 
 >#### Challenge
