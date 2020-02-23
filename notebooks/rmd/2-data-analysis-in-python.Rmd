@@ -1056,12 +1056,12 @@ Instead of dropping observations that has `NaN` values in a any column,
 a subset of columns can be considered.
 
 ```{python}
-world_data_2018.dropna(subset='life_expectancy'])
+world_data_2018.dropna(subset=['life_expectancy'])
 ```
 
 Non-numeric values can also be coerced into explicit `NaN` values
 via the `to_numeric()` top level function.
 
 ```{python}
-world_data_2018['life_expectancy'], errors='coerce')
+pd.to_numeric(world_data_2018['life_expectancy'], errors='coerce')
 ```
