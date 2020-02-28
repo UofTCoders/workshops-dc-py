@@ -812,6 +812,17 @@ it is slow for us to process all the information as numbers in a table
 A higher bandwidth operation
 is to let our brain interpret colors for the strength of the relationships
 through a heatmap.
+A quick way of doing this is to use the built-in dataframe styling,
+which uses HTML and CSS to color cells in the dataframe output.
+
+```{python}
+world_data_2014.drop(columns='year').corr().style.background_gradient()
+```
+
+The colorized output from pandas style can be exported to HTML or Excel,
+but it cannot be easily saved as an image.
+To create a figure that can be saved as an image,
+we can instead use seaborn.
 
 ```{python}
 sns.heatmap(world_data_2014.drop(columns='year').corr())
