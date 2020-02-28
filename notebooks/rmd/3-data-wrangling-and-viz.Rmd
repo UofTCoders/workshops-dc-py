@@ -784,9 +784,11 @@ sns.pairplot(world_data_2014)
 
 The year column is not that insightful since there is only one year in the data.
 Removing that column gives more space for the rest of the plots.
+The plots above and below the diagonal histograms are the same,
+so we can keep only the bottom left corner.
 
 ```{python}
-sns.pairplot(world_data_2014.drop(columns='year'))
+sns.pairplot(world_data_2014.drop(columns='year'), corner=True)
 ```
 
 Each histogram on the diagonal shows the distribution of a single variable in a histogram.
