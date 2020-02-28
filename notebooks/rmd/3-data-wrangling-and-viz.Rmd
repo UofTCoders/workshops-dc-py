@@ -851,8 +851,9 @@ of how the dataframe columns relate to each other.
 Let's zoom in on the relationship between income and life expectancy,
 which appears to be quite strong.
 
+<!-- # TODO Make this a challenge where they learn how to find things on stackoverflow -->
+
 ```{python}
-# TODO Make this a challenge where they learn how to find things on stackoverflow
 ax = sns.scatterplot(x='income', y='life_expectancy', data=world_data_2014)
 ```
 
