@@ -58,7 +58,7 @@ world_data = pd.read_csv(url)
 2 - How to select only the columns 'country' and 'year' from the dataframe?
 
 ```{python}
-world_data[['country', 'year']].head() #head just to limit output
+world_data[['country', 'year']]
 ```
 
 3 - How to select a few rows together with the columns above?
