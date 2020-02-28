@@ -91,7 +91,7 @@ world_data.groupby('region')['population'].sum()
 world_data.loc[world_data['year'] == 2018].groupby('region').size()
 ```
 
-<!-- #region {"toc-hr-collapsed": true} -->
+<!-- #region toc-hr-collapsed=true -->
 ## Introduction to plotting
 
 The human visual system is one of the most advanced apparatuses for detecting patterns
@@ -346,7 +346,7 @@ without getting bogged down in technical plotting details.
 
 [seaborn]: (https://seaborn.pydata.org/introduction.html#introduction)
 
-<!-- #region {"toc-hr-collapsed": false} -->
+<!-- #region toc-hr-collapsed=false -->
 ## Visual data exploration with `seaborn`
 
 When visually exploring data with lots of variables,
@@ -524,7 +524,7 @@ The legend now lists the colors in the expected order.
 This modification also ensures that when making plots with income groups on the x- or y-axis,
 they will be plotted in the expected order.
 
-<!-- #region {"toc-hr-collapsed": true} -->
+<!-- #region toc-hr-collapsed=true -->
 ### Conditioning quantitative relationships on qualitative variables
 
 It is difficult to explore multiple categorical relationships within one single plot.
@@ -771,7 +771,7 @@ sns.relplot(x='co2_total', y='co2_per_capita', col='year', hue='income_group',
             data=world_data_1920_2018, col_wrap=3, height=3.5)
 ```
 
-<!-- #region {"toc-hr-collapsed": true} -->
+<!-- #region toc-hr-collapsed=true -->
 ### How to know which relationships to start exploring?
 <!-- #endregion -->
 
@@ -916,7 +916,7 @@ and the average number of children per woman will be close to two worldwide in y
 [gapminder video library]: https://www.gapminder.org/videos/
 [this]: https://www.gapminder.org/answers/will-saving-poor-children-lead-to-overpopulation/
 [this one]: https://www.gapminder.org/videos/population-growth-explained-with-ikea-boxes/
-<!-- #region {"toc-hr-collapsed": true} -->
+<!-- #region toc-hr-collapsed=true -->
 ### Exploring a single quantitative variable across multiple levels of a categorical variable
 
 When exploring a single quantitative variable,
