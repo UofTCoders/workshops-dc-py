@@ -127,12 +127,6 @@ The high-level figures created by `seaborn` can be configured via the `matplotli
 so learning these packages in tandem is useful.
 <!-- #endregion -->
 
-```{python}
-# %matplotlib inline
-# Note that this will only need to be done the first time you create a plot in a notebook
-# all subsequent plots will show up as expected.
-```
-
 To facilitate our understanding of plotting concepts,
 the initial examples here will not include dataframes,
 but instead have simple lists holding just a few data points.
