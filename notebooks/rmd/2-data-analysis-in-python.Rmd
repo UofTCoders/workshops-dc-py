@@ -71,9 +71,9 @@ Then we will learn how to dive deeper into this data using Python!
 [The best stats you have ever seen]: https://www.youtube.com/watch?v=hVimVzgtD6w
 [this 5-10 min quiz]: http://forms.gapminder.org/s3/test-2018
 
-We are studying the species and weight of animals caught in plots in our study
-area. The dataset is stored as a comma separated value (CSV) file. Each row
-holds information for a single animal, and the columns represent:
+
+The dataset is stored as a comma separated value (CSV) file,
+containing the following columns:
 
 | Column                | Description                                                                                            |
 |-----------------------|--------------------------------------------------------------------------------------------------------|
