@@ -328,7 +328,7 @@ You might already be familiar with this syntax
 if you have commented in online forums or used chat applications.
 An example of the syntax can look like this:
 
-```markdown
+```
 # Heading level one
 
 - A bullet point
