@@ -1,12 +1,13 @@
 ---
 jupyter:
   jupytext:
+    cell_metadata_json: true
     formats: ipynb,rmd//Rmd
     text_representation:
       extension: .Rmd
       format_name: rmarkdown
-      format_version: '1.1'
-      jupytext_version: 1.2.1
+      format_version: '1.2'
+      jupytext_version: 1.3.4
   kernelspec:
     display_name: Python 3
     language: python
@@ -414,7 +415,6 @@ to show the available options,
 more on that later.
 <!-- #endregion -->
 
-<!-- #region -->
 ### Exploring data with the `pandas` package
 
 For this section of the tutorial,
@@ -494,9 +494,8 @@ The `groupby()` method *splits* the observations into groups,
 the `mean()` is *applied* an operation to each group,
 and the results are *combined* into the table that we can see here.
 We will learn much more about this in a later lecture.
-<!-- #endregion -->
 
-<!-- #region -->
+
 ### Visualizing data with `seaborn`
 
 A crucial part of any exploratory data analysis is data visualization.
@@ -571,7 +570,6 @@ and a lot of the variation in our data can be explained by which species the obs
 This has been an introduction to what data analysis looks like with Python in the Jupyter Notebook.
 We will get into details about all the steps of this workflow in the following lectures,
 and you can keep referring back to this lecture as a high level overview of the process.
-<!-- #endregion -->
 
 <!-- #region {"toc-hr-collapsed": false} -->
 # Introduction to programming in Python
@@ -592,7 +590,7 @@ and you can keep referring back to this lecture as a high level overview of the 
 
 ---
 
-<!-- #region -->
+
 ## Operators
 
 Python can be used as a calculator,
@@ -618,9 +616,7 @@ and they will be ignored by the Python interpreter.
 # `**` means "to the power of"
 2 ** 3
 ```
-<!-- #endregion -->
 
-<!-- #region -->
 ## Variables
 
 Values can be stored as variables,
@@ -665,9 +661,7 @@ A space can be added to separate the words.
 ```{python}
 b + ' ' + c
 ```
-<!-- #endregion -->
 
-<!-- #region -->
 ## Functions
 
 To find out what type a variable is,
@@ -724,7 +718,6 @@ b
 ```
 
 The output from `type()` is formatted slightly differently when it is printed.
-<!-- #endregion -->
 
 <!-- #region {"toc-hr-collapsed": true} -->
 ## Packages
@@ -1154,5 +1147,3 @@ It is possible to inspect the source code of a function by using double `?`
 Much of the power from languages such as Python comes from community contributed functions and packages
 written by talented people and shared openly,
 so that anyone can use them instead of reinventing the wheel.
-
-
